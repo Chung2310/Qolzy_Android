@@ -1,0 +1,121 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Thông tin comment cha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/user"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Khối nội dung -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Tên + thời gian -->
+            <LinearLayout
+                android:id="@+id/layoutHeader"
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/txtUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User Name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTime"
+                    android:textSize="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="Thời gian" />
+            </LinearLayout>
+
+            <!-- Nội dung comment (trái) -->
+            <TextView
+                android:id="@+id/txtContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Nội dung comment"
+                app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnLike"
+                app:layout_constraintHorizontal_bias="0"
+                android:layout_marginTop="4dp" />
+
+            <!-- Icon like (phải) -->
+            <ImageView
+                android:id="@+id/btnLike"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/love"
+                app:layout_constraintTop_toTopOf="@id/txtContent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="8dp" />
+
+            <!-- Lượt thích (ngay dưới icon like) -->
+            <TextView
+                android:id="@+id/tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100 lượt thích"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/btnLike"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="2dp" />
+
+            <!-- Nút trả lời -->
+            <TextView
+                android:id="@+id/btnReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↩ Trả lời"
+                app:layout_constraintTop_toBottomOf="@id/txtContent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp" />
+
+            <!-- Nút xem thêm reply -->
+            <TextView
+                android:id="@+id/btnSeeReplies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xem thêm câu trả lời"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/btnReply"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp" />
+
+            <!-- Nội dung reply (nếu có) -->
+            <TextView
+                android:id="@+id/txtReplies"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/btnSeeReplies"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="4dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</LinearLayout>

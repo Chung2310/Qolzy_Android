@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/splashFragment"
+    android:id="@+id/nav_graph_auth">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.qolzy.ui.splash.SplashFragment"
+        android:label="Splash">
+        <action
+            android:id="@+id/action_splash_to_login"
+            app:destination="@+id/loginFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.qolzy.ui.login.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@+id/registerFragment"/>
+        <action
+            android:id="@+id/action_login_to_choose_username"
+            app:destination="@+id/chooseUserNameFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/registerFragment"
+        android:name="com.example.qolzy.ui.register.RegisterFragment"
+        android:label="Register">
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@+id/loginFragment"/>
+        <argument
+            android:name="email"
+            app:argType="string"/>
+        <argument
+            android:name="password"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment android:id="@+id/chooseUserNameFragment"
+        android:name="com.example.qolzy.ui.choose_user_name.ChooseUserNameFragment"
+        android:label="ChooseUserName">
+
+    </fragment>
+</navigation>

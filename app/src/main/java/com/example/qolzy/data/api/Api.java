@@ -1,0 +1,151 @@
+package com.example.qolzy.data.api;
+
+import com.example.qolzy.data.model.ChangePasswordRequest;
+import com.example.qolzy.data.model.Comment;
+import com.example.qolzy.data.model.CommentReplies;
+import com.example.qolzy.data.model.CommentRequest;
+import com.example.qolzy.data.model.LoginRequest;
+import com.example.qolzy.data.model.LoginRequestFirebase;
+import com.example.qolzy.data.model.Post;
+import com.example.qolzy.data.model.RefreshTokenRequest;
+import com.example.qolzy.data.model.RegisterRequest;
+import com.example.qolzy.data.model.ResultModel;
+import com.example.qolzy.data.model.Story;
+import com.example.qolzy.data.model.User;
+import com.example.qolzy.data.model.UserUpdateRequest;
+import com.example.qolzy.music.MusicItem;
+import com.example.qolzy.music.MusicResponse;
+
+import java.util.List;
+
+import io.reactivex.rxjava3.core.Observable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
+public interface Api {
+    // api auth
+    @POST("auth/login")
+    Observable<ResultModel<User>> login(@Body LoginRequest loginRequest);
+    @POST("auth/register")
+    Observable<ResultModel<String>> register(@Body RegisterRequest registerRequest);
+    @POST("auth/firebase")
+    Observable<ResultModel<User>> loginOrRegisterWithFirebase(@Body LoginRequestFirebase loginRequestFirebase);
+    @POST("auth/refreshToken")
+    Observable<ResultModel<RefreshTokenRequest>> refresh(@Body RefreshTokenRequest request);
+
+    // api user
+    @POST("user/update")
+    Observable<ResultModel<User>> updateUser(@Body UserUpdateRequest userUpdateRequest);
+    @POST("user/changePass")
+    Observable<ResultModel<String>> changePassword(@Body ChangePasswordRequest changePasswordRequest);
+    @POST("user/username")
+    Observable<ResultModel<String>> saveUserName(@Query("userName") String userName,
+                                                 @Query("userId") Long userId);
+    @Multipart
+    @POST("user/uploadImage/{userId}")
+    Observable<ResultModel<String>> uploadImage(
+            @Path("userId") Long id,
+            @Query("mode") String mode,
+            @Part MultipartBody.Part image
+    );
+
+
+    @POST("post")
+    Observable<ResultModel<String>> createPost(
+            @Body MusicItem music,
+            @Query("content") String content,
+            @Query("userId") Long userId
+
+    );
+
+    @Multipart
+    @POST("post/upload")
+    Observable<ResultModel<String>> createPostFile(
+            @Query("postId") Long postId,
+            @Part List<MultipartBody.Part> files
+
+    );
+
+    //api post
+    @GET("post")
+    Observable<ResultModel<List<Post>>> getPosts(@Query("page") int page,
+                                           @Query("size") int size,
+                                           @Query("userId") int userId);
+    @GET("post/{userId}")
+    Observable<ResultModel<List<Post>>> getPostsHistory(@Path("userId") Long userId,
+                                                        @Query("page") int page,
+                                                        @Query("size") int size);
+
+
+    //api story
+    @GET("story")
+    Observable<ResultModel<List<Story>>> getStories(@Query("userId") int userId);
+    @GET("story/{userId}")
+    Observable<ResultModel<List<Story>>> getStoriesHistory(@Path("userId") Long userId,
+                                                           @Query("page") int page,
+                                                           @Query("size") int size);
+
+    // api like
+    @PUT("like")
+    Observable<ResultModel<String>> toggleLike(@Query("mode") String mode,
+                                               @Query("userId") Long userId,
+                                               @Query("id") Long id);
+    // api comment
+    @GET("comment/{postId}")
+    Observable<ResultModel<List<Comment>>> loadCommentByPostId(
+            @Path("postId") Long postId,
+            @Query("userId") Long userId,
+            @Query("page") int page,
+            @Query("size") int size);
+
+    @POST("comment")
+    Observable<ResultModel<String>> createCommentParent(
+            @Body CommentRequest commentRequest);
+
+    @GET("comment/replies/{commentId}")
+    Observable<ResultModel<List<Comment>>> loadCommentRepliesByCommentId(
+            @Path("commentId") Long commentId,
+            @Query("userId") Long userId,
+            @Query("page") int page,
+            @Query("size") int size);
+
+    @GET("v3.0/tracks/")
+    Observable<MusicResponse> getMusic(
+            @Query("client_id") String clientId,
+            @Query("format") String format,
+            @Query("limit") int limit,
+            @Query("search") String search
+    );
+
+    @GET("v3.0/tracks/")
+    Observable<MusicResponse> getMusicById(
+            @Query("client_id") String clientId,
+            @Query("id") String id
+    );
+
+    @PUT("admin/user/role/{id}")
+    Observable<ResultModel<String>> setRoleAdminByUserId(@Path("id") Long id);
+
+    @DELETE("admin/user/delete/{userId}")
+    Observable<ResultModel<String>> deleteUser(@Path("userId") Long userId);
+
+    @PUT("reviewLike")
+    Observable<ResultModel<Long>> getLikeCount(@Query("reviewId") Long reviewId);
+
+
+    @DELETE("contact/{userId}/{userContactId}")
+    Observable<ResultModel<String>> deleteContract(
+            @Path("userId") Long userId,
+            @Path("userContactId") Long userContactId
+    );
+}

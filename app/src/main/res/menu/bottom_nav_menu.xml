@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home"
+        tools:ignore="MenuTitle" />
+    <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/search_32"
+        tools:ignore="MenuTitle"/>
+    <item
+        android:id="@+id/nav_add_post"
+        android:icon="@drawable/add_32"
+        tools:ignore="MenuTitle"/>
+    <item
+        android:id="@+id/nav_reels"
+        android:icon="@drawable/clapperboard_32"
+        tools:ignore="MenuTitle"/>
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/user"
+        tools:ignore="MenuTitle"/>
+
+</menu>
