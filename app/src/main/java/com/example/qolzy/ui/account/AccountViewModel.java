@@ -20,6 +20,7 @@ import com.example.qolzy.data.api.RetrofitClient;
 import com.example.qolzy.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -29,9 +30,12 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.HttpException;
 
 public class AccountViewModel extends AndroidViewModel {
     private final MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> messageLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> statusLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> uploadResult = new MutableLiveData<>();
     private Api api;
     private UserRepository userRepository;
@@ -44,6 +48,8 @@ public class AccountViewModel extends AndroidViewModel {
         userRepository = new UserRepository(application);
         user = userRepository.getUser();
     }
+
+
 
     public void updateUser(Long id,String name, String phone, String address){
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest(id,name,phone,address);
@@ -123,5 +129,49 @@ public class AccountViewModel extends AndroidViewModel {
         String path = cursor.getString(idx);
         cursor.close();
         return path;
+    }
+
+    public void getUserDetail(Long userId) {
+        compositeDisposable.add(api.getUserDetail(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response -> {
+                            statusLiveData.setValue(response.getStatus());
+                            messageLiveData.setValue(response.getMessage());
+                            if (response.getStatus() == 200) {
+                                userMutableLiveData.setValue(response.getResult());
+                            }
+                        },
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                HttpException httpEx = (HttpException) throwable;
+                                statusLiveData.setValue(httpEx.code());
+                                try {
+                                    String errorBody = httpEx.response().errorBody().string();
+                                    JSONObject json = new JSONObject(errorBody);
+                                    String serverMessage = json.optString("message", "Lỗi không xác định");
+                                    messageLiveData.setValue(serverMessage);
+                                } catch (Exception e) {
+                                    messageLiveData.setValue("Lỗi khi đọc message từ server");
+                                }
+                            } else {
+                                messageLiveData.setValue("Lỗi: " + throwable.getMessage());
+                                Log.d("HomeViewModel", "Lỗi: " + throwable.getMessage());
+                            }
+                        }
+                ));
+    }
+
+    public MutableLiveData<User> getUserMutableLiveData() {
+        return userMutableLiveData;
+    }
+
+    public MutableLiveData<String> getMessageLiveData() {
+        return messageLiveData;
+    }
+
+    public MutableLiveData<Integer> getStatusLiveData() {
+        return statusLiveData;
     }
 }

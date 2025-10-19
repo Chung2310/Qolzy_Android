@@ -1,4 +1,4 @@
-package com.example.qolzy.music;
+package com.example.qolzy.ui.music;
 
 import com.google.gson.annotations.SerializedName;
 

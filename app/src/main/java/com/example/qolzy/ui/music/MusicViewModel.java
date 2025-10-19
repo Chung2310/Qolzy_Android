@@ -1,4 +1,4 @@
-package com.example.qolzy.music;
+package com.example.qolzy.ui.music;
 
 import android.app.Application;
 import android.util.Log;
@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.qolzy.data.api.Api;
 import com.example.qolzy.data.api.RetrofitClient;
-import com.example.qolzy.data.model.Post;
 import com.example.qolzy.util.Utils;
 
 import org.json.JSONObject;

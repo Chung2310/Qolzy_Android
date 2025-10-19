@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Qolzy Mess"
+        app:titleTextColor="#3F51B5"
+        android:backgroundTint="#FFFFFF"
+        android:titleTextColor="@android:color/white"
+        app:titleCentered="false"/>
+
+    <!-- Search + Content -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Search bar -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_margin="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:queryHint="Tìm liên hệ"
+                app:iconifiedByDefault="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- RecyclerView -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvContacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/txtNoData"
+        android:text="Chưa có liên hệ nào!"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

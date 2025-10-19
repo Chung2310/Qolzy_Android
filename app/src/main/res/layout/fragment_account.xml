@@ -1,224 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/profile_root"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fitsSystemWindows="true">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- AppBar -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_profile"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/white"
-            app:titleTextAppearance="@style/TextAppearance.AppCompat.Subhead"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
-
-            <!-- Username and menu -->
-            <TextView
-                android:id="@+id/tvUsernameToolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="username"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_gravity="center_vertical" />
-
-            <ImageView
-                android:id="@+id/btnToolbarOptions"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="end|center_vertical"
-                android:padding="6dp"
-                android:src="@drawable/ic_move_vert" />
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Main content scrollable -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_profile"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layoutContent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true">
+        android:background="@color/white"
+        android:fitsSystemWindows="true">
 
-        <LinearLayout
-            android:id="@+id/container"
-            android:orientation="vertical"
+        <!-- AppBar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="16dp">
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
 
-            <!-- Header: avatar + stats -->
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_profile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:gravity="center_vertical">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/white"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Subhead"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
 
-                <!-- Avatar -->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgProfileAvatar"
-                    android:layout_width="86dp"
-                    android:layout_height="86dp" />
-
-                <!-- Stats -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="8dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tvPostsCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="123"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bài viết"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tvFollowersCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="10K"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Người theo dõi"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tvFollowingCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="200"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Đang theo dõi"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Username, bio, edit/follow buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="8dp">
-
+                <!-- Username and menu -->
                 <TextView
-                    android:id="@+id/tvDisplayName"
+                    android:id="@+id/tvUsernameToolbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Full Name"
+                    android:text="username"
                     android:textStyle="bold"
-                    android:textSize="14sp" />
+                    android:textSize="18sp"
+                    android:layout_gravity="center_vertical" />
 
-                <!-- Buttons row -->
+                <ImageView
+                    android:id="@+id/btnToolbarOptions"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_move_vert" />
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Main content scrollable -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/container"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp">
+
+                <!-- Header: avatar + stats -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="3"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="center_vertical">
+
+                    <!-- Avatar -->
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgProfileAvatar"
+                        android:layout_width="86dp"
+                        android:layout_height="86dp" />
+
+                    <!-- Stats -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="8dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvPostsCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="123"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bài viết"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvFollowersCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="10K"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Người theo dõi"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvFollowingCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="200"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Đang theo dõi"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Username, bio, edit/follow buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
                     android:paddingTop="8dp">
 
-                    <Button
-                        android:id="@+id/btnSignOut"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textColor="@color/black"
-                        android:layout_height="38dp"
-                        android:text="Đăng xuất"/>
-
-                    <Button
-                        android:id="@+id/btnEditProfile"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textColor="@color/black"
+                    <TextView
+                        android:id="@+id/tvDisplayName"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Chỉnh sửa trang cá nhân"/>
+                        android:text="Full Name"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
 
-                    <Button
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:id="@+id/btnShareProfile"
-                        android:layout_width="0dp"
-                        android:layout_height="38dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@color/black"
-                        android:text="Chia sẻ" />
+                    <!-- Buttons row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        android:paddingTop="8dp">
+
+                        <Button
+                            android:id="@+id/btnSignOut"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/black"
+                            android:layout_height="38dp"
+                            android:text="Đăng xuất"/>
+
+                        <Button
+                            android:id="@+id/btnEditProfile"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/black"
+                            android:layout_height="wrap_content"
+                            android:text="Chỉnh sửa trang cá nhân"/>
+
+                        <Button
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:id="@+id/btnShareProfile"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/black"
+                            android:text="Chia sẻ" />
+                        <Button
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:id="@+id/btnDetailMessage"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:visibility="invisible"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/black"
+                            android:text="Nhắn tin" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <!-- 🔥 Tabs and ViewPager -->
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"/>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-            <!-- 🔥 Tabs and ViewPager -->
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+</FrameLayout>

@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -28,6 +29,15 @@
             android:text="username"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/btnFollow"
+            android:text="Theo dõi"
+            android:padding="4dp"
+            android:background="@drawable/bg_qty_button"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <ImageView
             android:id="@+id/btnMenu"
             android:layout_width="24dp"
@@ -36,22 +46,55 @@
     </LinearLayout>
 
     <!-- Media (ảnh / video) -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerMedia"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp">
 
-    <ImageView
-        android:id="@+id/imgOverlayHeart"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:alpha="0"
-        android:scaleX="0.2"
-        android:scaleY="0.2"
-        android:src="@drawable/love1"
-        android:visibility="gone" />
+        <!-- Media -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerMedia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Overlay heart -->
+        <ImageView
+            android:id="@+id/imgOverlayHeart"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:alpha="0"
+            android:scaleX="0.2"
+            android:scaleY="0.2"
+            android:src="@drawable/love1"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtCountMedia"
+            android:layout_width="wrap_content"
+            android:visibility="invisible"
+            android:layout_height="30dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/bg_qty_button"
+            android:padding="6dp"
+            android:src="@drawable/ic_volume_un_mute"
+            app:tint="@android:color/white" />
+
+        <!-- Nút loa (mute/unmute) -->
+        <ImageView
+            android:id="@+id/btnMusic"
+            android:layout_width="30dp"
+            android:visibility="invisible"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="12dp"
+            android:background="@drawable/bg_circle_black"
+            android:padding="6dp"
+            android:src="@drawable/ic_volume_un_mute"
+            app:tint="@android:color/white" />
+    </FrameLayout>
 
     <!-- Action buttons -->
     <LinearLayout

@@ -1,4 +1,4 @@
-package com.example.qolzy.music;
+package com.example.qolzy.ui.music;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,11 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.qolzy.databinding.LayoutBottomsheetMusicBinding;
-import com.example.qolzy.ui.home.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BottomSheetMusic extends BottomSheetDialogFragment {

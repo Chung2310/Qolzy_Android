@@ -1,4 +1,4 @@
-package com.example.qolzy.music;
+package com.example.qolzy.ui.music;
 
 import android.media.MediaPlayer;
 import android.os.Handler;

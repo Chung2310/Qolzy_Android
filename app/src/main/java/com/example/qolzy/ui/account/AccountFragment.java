@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class AccountFragment extends Fragment {
     private String currentUploadMode = "";
     private UserRepository userRepository;
     private User user;
+    private Long userId;
     private FirebaseAuth mAuth;
 
     public static AccountFragment newInstance() {
@@ -69,8 +71,11 @@ public class AccountFragment extends Fragment {
             user = (User) getArguments().getSerializable("USER");
             binding.btnEditProfile.setVisibility(View.INVISIBLE);
             binding.btnShareProfile.setVisibility(View.INVISIBLE);
+            binding.btnSignOut.setVisibility(View.INVISIBLE);
+            binding.btnDetailMessage.setVisibility(View.VISIBLE);
         } else {
-            user = userRepository.getUser();
+            userId = (long) userRepository.getUserId();
+            binding.btnDetailMessage.setVisibility(View.INVISIBLE);
         }
 
         return root;
@@ -81,10 +86,43 @@ public class AccountFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(AccountViewModel.class);
 
-        showDataUser();
-        setupViewPager();
-        events();
+        ProgressBar progressBar = binding.progressBar;
+        View layoutContent = binding.layoutContent;
+
+        // Nếu user đã có sẵn từ arguments
+        if (user != null) {
+            progressBar.setVisibility(View.GONE);
+            layoutContent.setVisibility(View.VISIBLE);
+
+            showDataUser();
+            setupViewPager();
+            events();
+        } else {
+            // Hiển thị ProgressBar trước khi load user từ API
+            progressBar.setVisibility(View.VISIBLE);
+            layoutContent.setVisibility(View.GONE);
+
+            mViewModel.getUserDetail(userId);
+            mViewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), response -> {
+                if (response != null) {
+                    user = response;
+                    userRepository.saveUser(user);
+
+                    // Sau khi load xong, ẩn ProgressBar và show content
+                    progressBar.setVisibility(View.GONE);
+                    layoutContent.setVisibility(View.VISIBLE);
+
+                    showDataUser();
+                    setupViewPager();
+                    events();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Không tải được thông tin người dùng", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
+
 
     private void setupViewPager() {
         AccountPagerAdapter adapter = new AccountPagerAdapter(requireActivity(), user);

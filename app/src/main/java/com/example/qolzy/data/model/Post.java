@@ -1,5 +1,7 @@
 package com.example.qolzy.data.model;
 
+import com.example.qolzy.ui.music.MusicItem;
+
 import java.util.List;
 
 public class Post {
@@ -7,11 +9,12 @@ public class Post {
     private User user;
     private int likes;
     private String content;
-    private String musicId;
+    private MusicItem music;
     private int comments;
     private List<PostMedia> medias;
     private String createAt;
     private Boolean likedByCurrentUser;
+    private Boolean followByCurrentUser;
 
     public Long getId() {
         return id;
@@ -33,12 +36,12 @@ public class Post {
         return likedByCurrentUser;
     }
 
-    public String getMusicId() {
-        return musicId;
+    public MusicItem getMusic() {
+        return music;
     }
 
-    public void setMusicId(String musicId) {
-        this.musicId = musicId;
+    public void setMusic(MusicItem music) {
+        this.music = music;
     }
 
     public void setLikedByCurrentUser(Boolean likedByCurrentUser) {
@@ -83,5 +86,13 @@ public class Post {
 
     public void setMedias(List<PostMedia> medias) {
         this.medias = medias;
+    }
+
+    public Boolean getFollowByCurrentUser() {
+        return followByCurrentUser;
+    }
+
+    public void setFollowByCurrentUser(Boolean followByCurrentUser) {
+        this.followByCurrentUser = followByCurrentUser;
     }
 }

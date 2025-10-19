@@ -22,6 +22,7 @@ import com.example.qolzy.data.model.User;
 import com.example.qolzy.databinding.FragmentPostsHistoryBinding;
 import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.util.Utils;
+import com.google.android.exoplayer2.ExoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class PostsHistoryFragment extends Fragment {
     private PostHistoryAdapter postAdapter;
     private List<Post> posts = new ArrayList<>();
     private int page = 0, size = 10;
+    private ExoPlayer exoPlayer;
 
     public static PostsHistoryFragment newInstance(Long id) {
         PostsHistoryFragment fragment = new PostsHistoryFragment();
@@ -48,6 +50,7 @@ public class PostsHistoryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        exoPlayer = new ExoPlayer.Builder(requireContext()).build();
         if (getArguments() != null) {
             userId = getArguments().getLong(ARG_USER_ID);
         }
@@ -58,7 +61,7 @@ public class PostsHistoryFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentPostsHistoryBinding.inflate(inflater, container, false);
 
-        postAdapter = new PostHistoryAdapter(requireContext(),posts);
+        postAdapter = new PostHistoryAdapter(requireContext(),posts, exoPlayer);
         binding.recyclerViewPostsHistory.setLayoutManager(new GridLayoutManager(requireContext(), 3));
         binding.recyclerViewPostsHistory.setAdapter(postAdapter);
 

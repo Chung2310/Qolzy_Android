@@ -20,6 +20,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:background="@color/white"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
@@ -34,6 +35,7 @@
 
                 <ImageView
                     android:id="@+id/logo"
+                    android:layout_marginTop="2dp"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:src="@drawable/logo_qolzy"
@@ -96,5 +98,11 @@
                 android:overScrollMode="never"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

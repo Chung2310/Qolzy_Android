@@ -12,16 +12,19 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.qolzy.R;
 import com.example.qolzy.data.model.Post;
 import com.example.qolzy.ui.post.MediaAdapter;
+import com.google.android.exoplayer2.ExoPlayer;
 
 import java.util.List;
 
 public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.PostHistoryViewHolder> {
     private Context context;
     private List<Post> posts;
+    private final ExoPlayer exoPlayer;
 
-    public PostHistoryAdapter(Context context, List<Post> posts) {
+    public PostHistoryAdapter(Context context, List<Post> posts, ExoPlayer exoPlayer) {
         this.context = context;
         this.posts = posts;
+        this.exoPlayer = exoPlayer;
     }
 
     public void updatePosts(List<Post> newPosts) {
@@ -40,7 +43,7 @@ public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.
     @Override
     public void onBindViewHolder(@NonNull PostHistoryAdapter.PostHistoryViewHolder holder, int position) {
         Post post = posts.get(position);
-        MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias());
+        MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias(), exoPlayer);
         holder.viewPagerMedia.setAdapter(mediaAdapter);
     }
 

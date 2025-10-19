@@ -1,6 +1,7 @@
 package com.example.qolzy.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.example.qolzy.ui.add_post.AddPostFragment;
 import com.example.qolzy.ui.home.HomeFragment;
 import com.example.qolzy.ui.reels.ReelsFragment;
 import com.example.qolzy.ui.search.SearchFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void switchToHome() {
         binding.bottomNavigationView.setSelectedItemId(R.id.nav_home);
+    }
+
+    public void setBottomNavigationVisibility(boolean isVisible) {
+        BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
 

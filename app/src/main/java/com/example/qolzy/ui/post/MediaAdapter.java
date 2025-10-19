@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.example.qolzy.data.model.PostMedia;
 import com.example.qolzy.util.Utils;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 import java.util.List;
@@ -23,13 +25,17 @@ import java.util.List;
 public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private final List<PostMedia> mediaList;
+    private final ExoPlayer exoPlayer;
+    private int currentVideoIndex = -1; // mặc định chưa play
+    private int playingPosition = 0;   // item đang attach player
 
     private static final int TYPE_IMAGE = 1;
     private static final int TYPE_VIDEO = 2;
 
-    public MediaAdapter(Context context, List<PostMedia> mediaList) {
+    public MediaAdapter(Context context, List<PostMedia> mediaList, ExoPlayer exoPlayer) {
         this.context = context;
         this.mediaList = mediaList;
+        this.exoPlayer = exoPlayer;
     }
 
     @Override
@@ -62,31 +68,60 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof ImageViewHolder) {
             Glide.with(context)
                     .load(fixedUrl + postMedia.getUrl())
+                    .placeholder(R.drawable.error_image) // ảnh tạm khi đang load
+                    .error(R.drawable.error_image)
                     .into(((ImageViewHolder) holder).imageView);
 
         } else if (holder instanceof VideoViewHolder) {
             VideoViewHolder videoHolder = (VideoViewHolder) holder;
+            exoPlayer.addListener(new Player.Listener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_BUFFERING) {
+                        videoHolder.progressBar.setVisibility(View.VISIBLE);
+                    } else if (state == Player.STATE_READY || state == Player.STATE_ENDED) {
+                        videoHolder.progressBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+            // chỉ attach player cho item đang phát
+            if (position == playingPosition) {
+                videoHolder.playerView.setPlayer(exoPlayer);
+            } else {
+                videoHolder.playerView.setPlayer(null);
+            }
 
-            // Tạo ExoPlayer cho từng video
-            ExoPlayer player = new ExoPlayer.Builder(context).build();
-            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(fixedUrl + postMedia.getUrl()));
-            player.setMediaItem(mediaItem);
-            player.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE); // loop video
-            player.prepare();
-            player.setPlayWhenReady(true);
+        }
 
-            videoHolder.playerView.setPlayer(player);
+    }
+
+    public void playVideoAt(int mediaPosition) {
+        if (mediaPosition < 0 || mediaPosition >= mediaList.size()) return;
+
+        PostMedia media = mediaList.get(mediaPosition);
+        String fixedUrl = Utils.BASE_URL.replace("/api/", "");
+
+        if (media.getUrl().endsWith(".mp4") || media.getUrl().endsWith(".3gp") || media.getUrl().endsWith(".mkv")) {
+            exoPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(fixedUrl + media.getUrl())));
+            exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
+            exoPlayer.prepare();
+            exoPlayer.setPlayWhenReady(true);
+
+            currentVideoIndex = mediaPosition;
+            playingPosition = mediaPosition;
+
+            // refresh để gắn player đúng item
+            notifyDataSetChanged();
+        } else {
+            exoPlayer.pause();
         }
     }
+
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
         if (holder instanceof VideoViewHolder) {
-            PlayerView playerView = ((VideoViewHolder) holder).playerView;
-            if (playerView.getPlayer() != null) {
-                playerView.getPlayer().release();
-                playerView.setPlayer(null);
-            }
+            ((VideoViewHolder) holder).playerView.setPlayer(null);
         }
     }
 
@@ -105,9 +140,11 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         PlayerView playerView;
+        ProgressBar progressBar;
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             playerView = itemView.findViewById(R.id.playerView);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }

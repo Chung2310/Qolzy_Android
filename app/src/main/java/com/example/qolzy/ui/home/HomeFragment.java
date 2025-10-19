@@ -2,6 +2,7 @@ package com.example.qolzy.ui.home;
 
 import static com.example.qolzy.R.id.nav_host_fragment;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
@@ -22,9 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.qolzy.R;
+import com.example.qolzy.data.model.Contact;
 import com.example.qolzy.data.model.Post;
 import com.example.qolzy.data.model.Story;
 import com.example.qolzy.data.model.User;
@@ -32,8 +35,10 @@ import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.databinding.FragmentHomeBinding;
 import com.example.qolzy.ui.account.AccountFragment;
 import com.example.qolzy.ui.comment.CommentsBottomSheet;
+import com.example.qolzy.ui.message.ContactFragment;
 import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.ui.story.StoryAdapter;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
@@ -47,12 +52,13 @@ public class HomeFragment extends Fragment {
 
     private UserRepository userRepository;
 
-    private int page = 0, size = 10;
+    private int page = 0, size = 30;
 
     private int userId;
     private PostAdapter postAdapter;
     private StoryAdapter storyAdapter;
-
+    private ExoPlayer exoPlayer;
+    private LinearLayoutManager linearLayoutManager;
     private List<Post> posts;
 
     public static HomeFragment newInstance() {
@@ -63,6 +69,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+        exoPlayer = new ExoPlayer.Builder(requireContext()).build();
         return binding.getRoot();
     }
 
@@ -76,11 +83,13 @@ public class HomeFragment extends Fragment {
 
         userRepository = new UserRepository(requireContext());
 
-        postAdapter = new PostAdapter(new ArrayList<>(), getContext());
+        postAdapter = new PostAdapter(new ArrayList<>(), getContext(), exoPlayer);
         storyAdapter = new StoryAdapter(new ArrayList<>(), getContext());
 
-        binding.recyclerPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        binding.recyclerPosts.setLayoutManager(linearLayoutManager);
         binding.recyclerPosts.setAdapter(postAdapter);
+
         binding.recyclerStories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         binding.recyclerStories.setAdapter(storyAdapter);
 
@@ -114,6 +123,11 @@ public class HomeFragment extends Fragment {
             public void onAvatarClicked(User user) {
                 openAccountFragment(user);
             }
+
+            @Override
+            public void onFollowClicked(Long followingId) {
+                mViewModel.toggleFollow((long)userId,followingId);
+            }
         });
 
         storyAdapter.setOnStoryActionListener(new StoryAdapter.OnStoryActionListener() {
@@ -122,6 +136,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        ProgressBar progressBar = binding.progressBar;
 
         mViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), msg -> {
             if (msg != null) {
@@ -132,6 +148,11 @@ public class HomeFragment extends Fragment {
         mViewModel.getPostsLiveData().observe(getViewLifecycleOwner(), posts -> {
             if(posts.size() > 0){
                 postAdapter.updatePosts(posts);
+                progressBar.setVisibility(View.GONE);
+            }
+            else {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Không tải được bài viết", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -146,13 +167,58 @@ public class HomeFragment extends Fragment {
         mViewModel.getPosts(page,size,userId);
         mViewModel.getStory(userId);
 
+        binding.recyclerPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int firstVisible = lm.findFirstVisibleItemPosition();
+                int lastVisible = lm.findLastVisibleItemPosition();
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // RecyclerView dừng cuộn
+                    Log.d("RecyclerInfo", "Dừng ở item đầu tiên: " + firstVisible + ", cuối cùng: " + lastVisible);
+
+                    // Nếu bạn chỉ muốn phát video ở item đầu tiên đang hiển thị:
+                    postAdapter.playVideoOfPost(firstVisible, 0);
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int firstVisible = lm.findFirstVisibleItemPosition();
+                int lastVisible = lm.findLastVisibleItemPosition();
+
+                Log.d("RecyclerInfo", "Đang thấy các item từ " + firstVisible + " đến " + lastVisible);
+            }
+        });
+
+        binding.btnMessager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactFragment contactFragment = new ContactFragment();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, contactFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // Dừng tất cả video khi rời màn hình
+        if (exoPlayer != null) {
+            exoPlayer.pause();
+        }
     }
+
 
     public void openAccountFragment(User user){
         AccountFragment fragment = new AccountFragment();
@@ -169,5 +235,13 @@ public class HomeFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
 
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (exoPlayer != null) {
+            exoPlayer.release();
+            exoPlayer = null;
+        }
     }
 }

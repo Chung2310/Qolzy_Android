@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qolzy.R;
+import com.example.qolzy.custom_view.CustomVideoView;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,14 @@ public class DetailMediaPagerAdapter extends RecyclerView.Adapter<DetailMediaPag
             holder.imageView.setVisibility(View.GONE);
             holder.videoView.setVisibility(View.VISIBLE);
             holder.videoView.setVideoURI(uri);
+            holder.videoView.setOnPreparedListener(mp -> {
+                int videoW = mp.getVideoWidth();
+                int videoH = mp.getVideoHeight();
+                if (holder.videoView instanceof CustomVideoView) {
+                    ((CustomVideoView) holder.videoView).setVideoSize(videoW, videoH);
+                }
+                mp.start();
+            });
             holder.videoView.start();
         } else {
             holder.videoView.setVisibility(View.GONE);

@@ -6,12 +6,13 @@
         android:id="@+id/imgDetailItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:visibility="gone"/>
 
     <VideoView
         android:id="@+id/videoDetailItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:visibility="gone"/>
 </FrameLayout>

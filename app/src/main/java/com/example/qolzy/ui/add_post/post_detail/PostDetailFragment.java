@@ -1,17 +1,12 @@
 package com.example.qolzy.ui.add_post.post_detail;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,11 +20,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.qolzy.R;
 import com.example.qolzy.activity.MainActivity;
-import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.databinding.FragmentPostDetailBinding;
-import com.example.qolzy.music.BottomSheetMusic;
-import com.example.qolzy.music.MusicItem;
+import com.example.qolzy.ui.music.BottomSheetMusic;
+import com.example.qolzy.ui.music.MusicItem;
 
 import java.util.ArrayList;
 
@@ -87,11 +81,10 @@ public class PostDetailFragment extends Fragment {
         Long userId = (long) userRepository.getUserId();
         binding.btnPublish.setOnClickListener(v -> {
             String caption = binding.edtCaptionDetail.getText().toString().trim();
-            // TODO: upload uriStrings + caption lên server hoặc Firebase
-
+            binding.progressBar.setVisibility(View.VISIBLE);
             mViewModel.createPost(caption, userId, musicItem);
             // Sau khi thành công:
-            requireActivity().getSupportFragmentManager().popBackStack(null, 0);
+
         });
 
         mViewModel.getPostIdLiveData().observe(getViewLifecycleOwner(), postId ->{
@@ -100,6 +93,7 @@ public class PostDetailFragment extends Fragment {
 
         mViewModel.getStatusLiveData().observe(getViewLifecycleOwner(), status -> {
             if (status == 201) {
+                binding.progressBar.setVisibility(View.GONE);
                 // Xoá bubble và mediaPlayer
                 if (bubbleView != null) {
                     ViewGroup rootView = (ViewGroup) requireActivity().findViewById(android.R.id.content);
@@ -114,18 +108,19 @@ public class PostDetailFragment extends Fragment {
                 }
                 musicItem = null;
 
-                // 1. Dọn sạch PostDetailFragment khỏi backstack
-                requireActivity().getSupportFragmentManager().popBackStack();
+                if(bubbleView == null){
+                    // 1. Dọn sạch PostDetailFragment khỏi backstack
+                    requireActivity().getSupportFragmentManager().popBackStack();
 
-                // 2. Chuyển tab bottom nav về Home
-                if (requireActivity() instanceof MainActivity) {
-                    ((MainActivity) requireActivity()).switchToHome();
+                    // 2. Chuyển tab bottom nav về Home
+                    if (requireActivity() instanceof MainActivity) {
+                        ((MainActivity) requireActivity()).switchToHome();
+                    }
                 }
+
             }
         });
-
-
-
+         
 
         mViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), message ->{
             Toast.makeText(requireContext(), message +"",Toast.LENGTH_SHORT).show();

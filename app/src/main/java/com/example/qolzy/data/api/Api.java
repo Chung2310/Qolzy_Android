@@ -2,10 +2,13 @@ package com.example.qolzy.data.api;
 
 import com.example.qolzy.data.model.ChangePasswordRequest;
 import com.example.qolzy.data.model.Comment;
-import com.example.qolzy.data.model.CommentReplies;
 import com.example.qolzy.data.model.CommentRequest;
+import com.example.qolzy.data.model.Contact;
+import com.example.qolzy.data.model.CreatePostRequest;
 import com.example.qolzy.data.model.LoginRequest;
 import com.example.qolzy.data.model.LoginRequestFirebase;
+import com.example.qolzy.data.model.Message;
+import com.example.qolzy.data.model.MessageRequest;
 import com.example.qolzy.data.model.Post;
 import com.example.qolzy.data.model.RefreshTokenRequest;
 import com.example.qolzy.data.model.RegisterRequest;
@@ -13,15 +16,14 @@ import com.example.qolzy.data.model.ResultModel;
 import com.example.qolzy.data.model.Story;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.model.UserUpdateRequest;
-import com.example.qolzy.music.MusicItem;
-import com.example.qolzy.music.MusicResponse;
+import com.example.qolzy.ui.music.MusicResponse;
+import com.example.qolzy.ui.reels.Reel;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -62,10 +64,7 @@ public interface Api {
 
     @POST("post")
     Observable<ResultModel<String>> createPost(
-            @Body MusicItem music,
-            @Query("content") String content,
-            @Query("userId") Long userId
-
+            @Body CreatePostRequest createPostRequest
     );
 
     @Multipart
@@ -74,6 +73,13 @@ public interface Api {
             @Query("postId") Long postId,
             @Part List<MultipartBody.Part> files
 
+    );
+
+    @GET("reels")
+    Observable<ResultModel<List<Reel>>> getReels(
+            @Query("userId") Long userId,
+            @Query("page") int page,
+            @Query("size") int size
     );
 
     //api post
@@ -119,6 +125,7 @@ public interface Api {
             @Query("page") int page,
             @Query("size") int size);
 
+    // lấy nhạc
     @GET("v3.0/tracks/")
     Observable<MusicResponse> getMusic(
             @Query("client_id") String clientId,
@@ -127,25 +134,38 @@ public interface Api {
             @Query("search") String search
     );
 
-    @GET("v3.0/tracks/")
-    Observable<MusicResponse> getMusicById(
-            @Query("client_id") String clientId,
-            @Query("id") String id
+    // lấy danh sách đã liên hệ
+    @GET("contact")
+    Observable<ResultModel<List<Contact>>> getContacts(
+            @Query("userId") Long userId,
+            @Query("page") int page,
+            @Query("size") int size
     );
 
-    @PUT("admin/user/role/{id}")
-    Observable<ResultModel<String>> setRoleAdminByUserId(@Path("id") Long id);
-
-    @DELETE("admin/user/delete/{userId}")
-    Observable<ResultModel<String>> deleteUser(@Path("userId") Long userId);
-
-    @PUT("reviewLike")
-    Observable<ResultModel<Long>> getLikeCount(@Query("reviewId") Long reviewId);
-
-
-    @DELETE("contact/{userId}/{userContactId}")
-    Observable<ResultModel<String>> deleteContract(
-            @Path("userId") Long userId,
-            @Path("userContactId") Long userContactId
+    @GET("contact/")
+    Observable<ResultModel<List<Contact>>> getContactsByUserName(
+            @Query("userName") String userName,
+            @Query("page") int page,
+            @Query("size") int size
     );
+
+    // lấy danh sách tin nhắn của người dùng và liên hệ
+    @GET("message")
+    Observable<ResultModel<List<Message>>> getMessagesByUserIdAndContactId(
+            @Query("senderId") Long senderId,
+            @Query("receiverId") Long receiverId,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+
+    @POST("follow")
+    Observable<ResultModel<String>> toggleFollow(@Query("followerId") Long follower,
+                                                 @Query("followingId") Long followingId);
+
+    @GET("auth/user")
+    Observable<ResultModel<User>> getUserDetail(@Query("userId") Long userId);
+
+    @POST("message")
+    Observable<ResultModel<String>> sendMessage(@Body MessageRequest messageRequest);
 }
