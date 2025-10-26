@@ -36,7 +36,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
     }
 
     public interface OnStoryActionListener {
-        void onClicked(Long storyId);
+        void onClicked(Long storyId, List<Story> stories);
     }
 
     public void setOnStoryActionListener(OnStoryActionListener listener) {
@@ -78,7 +78,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
 
         holder.itemStory.setOnClickListener(v ->{
             if(listener != null){
-                listener.onClicked(story.getId());
+                listener.onClicked(story.getId(), stories);
             }
         });
     }

@@ -74,56 +74,19 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         } else if (holder instanceof VideoViewHolder) {
             VideoViewHolder videoHolder = (VideoViewHolder) holder;
-            exoPlayer.addListener(new Player.Listener() {
-                @Override
-                public void onPlaybackStateChanged(int state) {
-                    if (state == Player.STATE_BUFFERING) {
-                        videoHolder.progressBar.setVisibility(View.VISIBLE);
-                    } else if (state == Player.STATE_READY || state == Player.STATE_ENDED) {
-                        videoHolder.progressBar.setVisibility(View.GONE);
-                    }
-                }
-            });
-            // chỉ attach player cho item đang phát
-            if (position == playingPosition) {
-                videoHolder.playerView.setPlayer(exoPlayer);
-            } else {
-                videoHolder.playerView.setPlayer(null);
+
+            videoHolder.playerView.setPlayer(exoPlayer);
+
+            MediaItem item = MediaItem.fromUri(postMedia.getUrl());
+            if (exoPlayer.getMediaItemCount() == 0 ||
+                    !exoPlayer.getMediaItemAt(0).localConfiguration.uri.equals(Uri.parse(postMedia.getUrl()))) {
+                exoPlayer.setMediaItem(item);
+                exoPlayer.prepare();
             }
-
         }
 
     }
 
-    public void playVideoAt(int mediaPosition) {
-        if (mediaPosition < 0 || mediaPosition >= mediaList.size()) return;
-
-        PostMedia media = mediaList.get(mediaPosition);
-        String fixedUrl = Utils.BASE_URL.replace("/api/", "");
-
-        if (media.getUrl().endsWith(".mp4") || media.getUrl().endsWith(".3gp") || media.getUrl().endsWith(".mkv")) {
-            exoPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(fixedUrl + media.getUrl())));
-            exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
-            exoPlayer.prepare();
-            exoPlayer.setPlayWhenReady(true);
-
-            currentVideoIndex = mediaPosition;
-            playingPosition = mediaPosition;
-
-            // refresh để gắn player đúng item
-            notifyDataSetChanged();
-        } else {
-            exoPlayer.pause();
-        }
-    }
-
-    @Override
-    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        super.onViewRecycled(holder);
-        if (holder instanceof VideoViewHolder) {
-            ((VideoViewHolder) holder).playerView.setPlayer(null);
-        }
-    }
 
     @Override
     public int getItemCount() {

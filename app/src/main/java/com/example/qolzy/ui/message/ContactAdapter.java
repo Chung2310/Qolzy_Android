@@ -31,7 +31,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private List<Contact> contacts;
 
     public interface OnContactActionListener {
-        void onClicked(Long contactId);
+        void onClicked(User contact);
     }
 
     private OnContactActionListener listener;
@@ -102,7 +102,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             holder.tvLastMsg.setText(shortenText(contact.getLastMessage(), 20));
         }
 
-        holder.itemContactLayout.setOnClickListener(v-> listener.onClicked(contact.getUserContact().getId()));
+        holder.itemContactLayout.setOnClickListener(v-> listener.onClicked(contact.getUserContact()));
     }
 
     @Override

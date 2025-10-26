@@ -1,11 +1,13 @@
 package com.example.qolzy.ui.home;
 
 import static com.example.qolzy.R.id.nav_host_fragment;
+import static com.example.qolzy.R.id.recyclerPosts;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,9 +41,12 @@ import com.example.qolzy.ui.comment.CommentsBottomSheet;
 import com.example.qolzy.ui.message.ContactFragment;
 import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.ui.story.StoryAdapter;
+import com.example.qolzy.ui.story.StoryDetailFragment;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +66,8 @@ public class HomeFragment extends Fragment {
     private ExoPlayer exoPlayer;
     private LinearLayoutManager linearLayoutManager;
     private List<Post> posts;
+    private PlayerView currentPlayerView;
+    private int currentPlayingPosition = RecyclerView.NO_POSITION;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -70,6 +78,7 @@ public class HomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         exoPlayer = new ExoPlayer.Builder(requireContext()).build();
+        initAutoPlayListener();
         return binding.getRoot();
     }
 
@@ -132,9 +141,25 @@ public class HomeFragment extends Fragment {
 
         storyAdapter.setOnStoryActionListener(new StoryAdapter.OnStoryActionListener() {
             @Override
-            public void onClicked(Long storyId) {
+            public void onClicked(Long storyId, List<Story> stories) {
+                StoryDetailFragment storyDetailFragment = new StoryDetailFragment();
 
+                // Tạo Bundle để truyền dữ liệu
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("story_list", (Serializable) stories);
+                bundle.putLong("story_id", storyId);
+
+                // Gắn bundle vào fragment
+                storyDetailFragment.setArguments(bundle);
+
+                // Chuyển fragment
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, storyDetailFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
+
         });
 
         ProgressBar progressBar = binding.progressBar;
@@ -167,34 +192,6 @@ public class HomeFragment extends Fragment {
         mViewModel.getPosts(page,size,userId);
         mViewModel.getStory(userId);
 
-        binding.recyclerPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
-                int firstVisible = lm.findFirstVisibleItemPosition();
-                int lastVisible = lm.findLastVisibleItemPosition();
-
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // RecyclerView dừng cuộn
-                    Log.d("RecyclerInfo", "Dừng ở item đầu tiên: " + firstVisible + ", cuối cùng: " + lastVisible);
-
-                    // Nếu bạn chỉ muốn phát video ở item đầu tiên đang hiển thị:
-                    postAdapter.playVideoOfPost(firstVisible, 0);
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
-                int firstVisible = lm.findFirstVisibleItemPosition();
-                int lastVisible = lm.findLastVisibleItemPosition();
-
-                Log.d("RecyclerInfo", "Đang thấy các item từ " + firstVisible + " đến " + lastVisible);
-            }
-        });
 
         binding.btnMessager.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +207,93 @@ public class HomeFragment extends Fragment {
         });
 
     }
+
+    private void initAutoPlayListener() {
+        binding.recyclerPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    autoPlayVisibleVideo();
+                }
+            }
+        });
+    }
+
+    private void autoPlayVisibleVideo() {
+        int firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
+        int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
+
+        int targetPos = -1;
+        float maxVisibleArea = 0f;
+
+        // tìm bài viết nào hiển thị rõ nhất trên màn hình
+        for (int i = firstVisible; i <= lastVisible; i++) {
+            View child = linearLayoutManager.findViewByPosition(i);
+            if (child != null) {
+                float visibleHeight = getVisibleHeightPercent(child);
+                if (visibleHeight > maxVisibleArea) {
+                    maxVisibleArea = visibleHeight;
+                    targetPos = i;
+                }
+            }
+        }
+
+        if (targetPos != -1 && targetPos != currentPlayingPosition) {
+            playVideoAtPosition(targetPos);
+        }
+    }
+
+    private float getVisibleHeightPercent(View view) {
+        Rect rect = new Rect();
+        view.getGlobalVisibleRect(rect);
+        float visibleHeight = rect.height();
+        return visibleHeight / view.getHeight();
+    }
+
+    private void playVideoAtPosition(int position) {
+        // Dừng video hiện tại nếu đang phát
+        if (currentPlayerView != null) {
+            currentPlayerView.setPlayer(null);
+            currentPlayerView = null;
+        }
+
+        // Lấy ViewHolder của bài post tại vị trí cần phát
+        RecyclerView.ViewHolder vh = binding.recyclerPosts.findViewHolderForAdapterPosition(position);
+        if (!(vh instanceof PostAdapter.PostViewHolder)) return;
+
+        PostAdapter.PostViewHolder postHolder = (PostAdapter.PostViewHolder) vh;
+        ViewPager2 pager = postHolder.itemView.findViewById(R.id.viewPagerMedia);
+
+        // Lấy vị trí media hiện tại trong ViewPager (đang hiển thị)
+        int currentMediaIndex = pager.getCurrentItem();
+
+        // Lấy RecyclerView bên trong ViewPager2
+        RecyclerView innerRv = (RecyclerView) pager.getChildAt(0);
+        if (innerRv == null) return;
+
+        // Lấy View đang hiển thị (chính là media hiện tại)
+        View currentMediaView = innerRv.getLayoutManager().findViewByPosition(currentMediaIndex);
+        if (currentMediaView == null) return;
+
+        // Tìm PlayerView bên trong media hiện tại (nếu là video)
+        PlayerView playerView = currentMediaView.findViewById(R.id.playerView);
+        if (playerView == null) {
+            // Nếu không có PlayerView → media là ảnh → không phát video
+            exoPlayer.pause();
+            currentPlayingPosition = RecyclerView.NO_POSITION;
+            return;
+        }
+
+        // Gán player và phát
+        currentPlayerView = playerView;
+        currentPlayerView.setPlayer(exoPlayer);
+        exoPlayer.setPlayWhenReady(true);
+
+        currentPlayingPosition = position;
+    }
+
 
     @Override
     public void onPause() {

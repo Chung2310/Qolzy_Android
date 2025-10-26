@@ -37,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> posts = new ArrayList<>();
     private Context context;
-    private final ExoPlayer exoPlayer;
+    private  ExoPlayer exoPlayer;
     boolean[] isMuted = {true};
 
     public interface OnPostActionListener {
@@ -129,7 +129,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (post.getMedias() != null){
             MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias(), exoPlayer);
             holder.viewPagerMedia.setAdapter(mediaAdapter);
-            mediaAdapter.playVideoAt(0);
+
             // Theo dõi khi user vuốt sang media mới
             holder.viewPagerMedia.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
@@ -138,7 +138,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     holder.txtCountMedia.setText((mediaPosition+1)+"/"+countMedia);
                     exoPlayer.stop();
                     exoPlayer.clearMediaItems();
-                    mediaAdapter.playVideoAt(mediaPosition);
+
                 }
             });
         }
@@ -191,22 +191,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     // -------------------------------
     // Các hàm xử lý riêng
-    // -------------------------------
-
-    public void playVideoOfPost(int postPosition, int mediaPosition) {
-        if (postPosition < 0 || postPosition >= posts.size()) return;
-        Post post = posts.get(postPosition);
-        if (post.getMedias() == null || post.getMedias().isEmpty()) return;
-
-        PostMedia media = post.getMedias().get(mediaPosition);
-        String url = Utils.BASE_URL.replace("/api/", "") + media.getUrl();
-
-        exoPlayer.setMediaItem(MediaItem.fromUri(url));
-        exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
-        exoPlayer.prepare();
-        exoPlayer.setPlayWhenReady(true);
-    }
-
+    // ------------------------------
 
     private void handleLikeClick(Post post, PostViewHolder holder) {
         boolean isLiked = post.getLikedByCurrentUser();

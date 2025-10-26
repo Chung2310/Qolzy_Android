@@ -4,6 +4,7 @@ public class Story {
     private Long id;
     private User user;
     private String media;
+    private int duration;
     private String createAt;
 
     public Long getId() {
@@ -36,5 +37,13 @@ public class Story {
 
     public void setCreateAt(String createAt) {
         this.createAt = createAt;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

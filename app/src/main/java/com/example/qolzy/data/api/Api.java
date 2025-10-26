@@ -158,7 +158,6 @@ public interface Api {
             @Query("size") int size
     );
 
-
     @POST("follow")
     Observable<ResultModel<String>> toggleFollow(@Query("followerId") Long follower,
                                                  @Query("followingId") Long followingId);

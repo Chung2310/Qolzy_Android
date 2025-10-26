@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import com.example.qolzy.R;
 import com.example.qolzy.activity.MainActivity;
 import com.example.qolzy.data.model.Contact;
+import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.databinding.FragmentContactBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -105,10 +106,10 @@ public class ContactFragment extends Fragment {
 
         adapter.setOnContactActionListener(new ContactAdapter.OnContactActionListener() {
             @Override
-            public void onClicked(Long contactId) {
+            public void onClicked(User contact) {
                 DetailMessageFragment detailMessageFragment = new DetailMessageFragment();
                 Bundle args = new Bundle();
-                args.putLong("contactId", contactId);
+                args.putSerializable("contact", contact);
                 detailMessageFragment.setArguments(args);
 
                 requireActivity().getSupportFragmentManager()

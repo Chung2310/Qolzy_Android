@@ -1,54 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_margin="1dp"
-    android:background="@drawable/bg_qty_button"
-    android:id="@+id/layoutContact"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Tin nhắn người nhận (bên trái) -->
     <LinearLayout
+        android:id="@+id/layoutReceiver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
         android:orientation="horizontal"
-        android:layout_margin="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:gravity="center_vertical">
+
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/cỉrcleImageMessage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:id="@+id/imgAvatarReceiver"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/user_32"
+            android:layout_marginEnd="6dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
 
-        <LinearLayout
-            android:layout_marginLeft="10dp"
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tvNameContact"
-                android:text="Đỗ Đức Chung"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <LinearLayout
-                android:weightSum="5"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/tvLastMessage"
-                    android:layout_weight="3"
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/tvLastTime"
-                    android:textColor="@color/black"
-                    android:layout_weight="2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvMessageReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_message_left"
+            android:textColor="@android:color/black"
+            android:padding="8dp"
+            android:text="Tin nhắn người nhận" />
     </LinearLayout>
+
+    <!-- Tin nhắn người gửi (bên phải) -->
+    <LinearLayout
+        android:id="@+id/layoutSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvMessageSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_message_right"
+            android:textColor="@android:color/white"
+            android:padding="8dp"
+            android:text="Tin nhắn người gửi" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatarSender"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/user_32"
+            android:layout_marginStart="6dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
+    </LinearLayout>
+
 </LinearLayout>
