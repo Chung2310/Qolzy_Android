@@ -29,7 +29,6 @@
         android:id="@+id/storyVideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:useController="false"
         android:visibility="gone"/>
 
     <!-- Nhấn trái/phải để chuyển -->

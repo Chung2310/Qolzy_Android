@@ -45,7 +45,7 @@ public class ChooseUserNameFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ChooseUserNameViewModel.class);
 
-        int userId = userRepository.getUserId();
+        Long userId =  getArguments().getLong("userId");
         binding.btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

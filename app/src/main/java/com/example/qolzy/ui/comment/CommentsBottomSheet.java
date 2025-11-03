@@ -145,22 +145,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                 replyParentId = null;
                 replyUserName = null;
 
-                // Thêm ngay vào adapter cho UI mượt
+                commentViewModel.loadCommentParent(postId, userId, page,size);
 
-                comment.setCountComment(0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    comment.setCreatedAt(LocalDateTime.now().toString());
-                }
-                comment.setLikes(0);
-                comment.setContent(content);
-                comment.setParenId(replyParentId);
-                comment.setLevel(level);
-                comment.setLikedByCurrentUser(false);
-                comment.setUserComment(userRepository.getUser());
-
-                List<Comment> addComments = new ArrayList<>();
-                addComments.add(comment);
-                adapter.insertReplies(replyParentId, addComments);
             }
         });
 

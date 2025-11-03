@@ -119,8 +119,14 @@ public class LoginFragment extends Fragment {
             }
             else if (user.getUserName() == null){
 
+                Bundle bundle = new Bundle();
+                bundle.putLong("userId", user.getId());
+
+                userRepository.saveUser(user);
+
                 NavController navController = NavHostFragment.findNavController(this);
-                navController.navigate(R.id.action_login_to_choose_username);
+                navController.navigate(R.id.action_login_to_choose_username, bundle);
+
             } else {
                 Toast.makeText(requireContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 Log.d("LoginFragment", "User ID: " + user.getId());
