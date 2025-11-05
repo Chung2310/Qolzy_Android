@@ -167,4 +167,7 @@ public interface Api {
 
     @POST("message")
     Observable<ResultModel<String>> sendMessage(@Body MessageRequest messageRequest);
+
+    @GET("user/search")
+    Observable<ResultModel<List<User>>> searchUser(@Query("keySearch") String keySearch);
 }
