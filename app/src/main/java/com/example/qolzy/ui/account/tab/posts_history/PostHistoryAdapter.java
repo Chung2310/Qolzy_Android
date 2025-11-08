@@ -43,7 +43,7 @@ public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.
     @Override
     public void onBindViewHolder(@NonNull PostHistoryAdapter.PostHistoryViewHolder holder, int position) {
         Post post = posts.get(position);
-        MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias(), exoPlayer);
+        MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias());
         holder.viewPagerMedia.setAdapter(mediaAdapter);
     }
 

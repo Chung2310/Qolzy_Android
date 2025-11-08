@@ -113,6 +113,8 @@ dependencies {
     // LibPhoneNumber
     implementation("com.googlecode.libphonenumber:libphonenumber:8.13.36")
 
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

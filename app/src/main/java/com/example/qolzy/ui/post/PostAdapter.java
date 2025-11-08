@@ -127,7 +127,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         if (post.getMedias() != null){
-            MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias(), exoPlayer);
+            MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias());
             holder.viewPagerMedia.setAdapter(mediaAdapter);
 
             // Theo dõi khi user vuốt sang media mới
