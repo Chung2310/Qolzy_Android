@@ -26,13 +26,14 @@ import java.util.List;
 public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private final List<PostMedia> mediaList;
-
+    private final ExoPlayer sharedPlayer;
     private static final int TYPE_IMAGE = 1;
     private static final int TYPE_VIDEO = 2;
 
-    public MediaAdapter(Context context, List<PostMedia> mediaList) {
+    public MediaAdapter(Context context, List<PostMedia> mediaList, ExoPlayer sharedPlayer) {
         this.context = context;
         this.mediaList = mediaList;
+        this.sharedPlayer = sharedPlayer;
     }
 
     @Override
@@ -79,17 +80,16 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             Log.d("VideoURL", videoUrl);
 
             // Tạo player riêng cho từng video
-            ExoPlayer player = new ExoPlayer.Builder(context).build();
-            videoHolder.playerView.setPlayer(player);
+            videoHolder.playerView.setPlayer(sharedPlayer);
             videoHolder.progressBar.setVisibility(View.VISIBLE);
 
             MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoUrl));
-            player.setMediaItem(mediaItem);
-            player.prepare();
-            player.setPlayWhenReady(true); // không auto-play
+            sharedPlayer.setMediaItem(mediaItem);
+            sharedPlayer.prepare();
+            sharedPlayer.setPlayWhenReady(true); // không auto-play
 
             // Theo dõi trạng thái buffer/loading
-            player.addListener(new Player.Listener() {
+            sharedPlayer.addListener(new Player.Listener() {
                 @Override
                 public void onPlaybackStateChanged(int state) {
                     if (state == Player.STATE_BUFFERING) {
@@ -97,14 +97,14 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     } else if (state == Player.STATE_READY) {
                         videoHolder.progressBar.setVisibility(View.GONE);
                     } else if (state == Player.STATE_ENDED) {
-                        player.seekTo(0);
-                        player.setPlayWhenReady(false);
+                        sharedPlayer.seekTo(0);
+                        sharedPlayer.setPlayWhenReady(false);
                     }
                 }
             });
 
             // Lưu lại player để giải phóng khi view bị recycle
-            videoHolder.player = player;
+            videoHolder.player = sharedPlayer;
         }
     }
 

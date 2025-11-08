@@ -39,6 +39,7 @@ import com.example.qolzy.databinding.FragmentHomeBinding;
 import com.example.qolzy.ui.account.AccountFragment;
 import com.example.qolzy.ui.comment.CommentsBottomSheet;
 import com.example.qolzy.ui.message.ContactFragment;
+import com.example.qolzy.ui.notification.NotificationFragment;
 import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.ui.story.StoryAdapter;
 import com.example.qolzy.ui.story.StoryDetailFragment;
@@ -206,6 +207,17 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        binding.btnNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NotificationFragment notificationFragment = new NotificationFragment();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, notificationFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     private void initAutoPlayListener() {
@@ -294,16 +306,6 @@ public class HomeFragment extends Fragment {
         currentPlayingPosition = position;
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (exoPlayer != null) {
-            exoPlayer.pause();
-        }
-    }
-
-
     public void openAccountFragment(User user){
         AccountFragment fragment = new AccountFragment();
 
@@ -320,6 +322,16 @@ public class HomeFragment extends Fragment {
                 .commit();
 
     }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (exoPlayer != null) {
+            exoPlayer.setPlayWhenReady(false);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

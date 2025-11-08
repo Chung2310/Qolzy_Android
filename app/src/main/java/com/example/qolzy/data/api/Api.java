@@ -9,6 +9,7 @@ import com.example.qolzy.data.model.LoginRequest;
 import com.example.qolzy.data.model.LoginRequestFirebase;
 import com.example.qolzy.data.model.Message;
 import com.example.qolzy.data.model.MessageRequest;
+import com.example.qolzy.data.model.Notification;
 import com.example.qolzy.data.model.Post;
 import com.example.qolzy.data.model.RefreshTokenRequest;
 import com.example.qolzy.data.model.RegisterRequest;
@@ -170,4 +171,9 @@ public interface Api {
 
     @GET("user/search")
     Observable<ResultModel<List<User>>> searchUser(@Query("keySearch") String keySearch);
+
+    @GET("notification")
+    Observable<ResultModel<List<Notification>>> getNotificationByUserId(@Query("page") int page,
+                                                                        @Query("size") int size,
+                                                                        @Query("userId") Long userId);
 }
