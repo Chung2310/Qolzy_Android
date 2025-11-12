@@ -40,14 +40,16 @@ public class PostDetailFragment extends Fragment {
 
     private View bubbleView;
     private MediaPlayer mediaPlayer;
+    String type = null;
     private boolean isPlaying = false;
     private MusicItem musicItem = null;
 
-    public static PostDetailFragment newInstance(ArrayList<String> uriStrings, ArrayList<Boolean> isVideos) {
+    public static PostDetailFragment newInstance(ArrayList<String> uriStrings, ArrayList<Boolean> isVideos, String type) {
         PostDetailFragment f = new PostDetailFragment();
         Bundle b = new Bundle();
         b.putStringArrayList(ARG_URIS, uriStrings);
-        b.putSerializable(ARG_IS_VIDEOS, isVideos); // dùng Serializable cho ArrayList<Boolean>
+        b.putSerializable(ARG_IS_VIDEOS, isVideos);
+        b.putString("type", type);
         f.setArguments(b);
         return f;
     }
@@ -68,6 +70,7 @@ public class PostDetailFragment extends Fragment {
         if (getArguments() != null) {
             uriStrings = getArguments().getStringArrayList(ARG_URIS);
             isVideos = (ArrayList<Boolean>) getArguments().getSerializable(ARG_IS_VIDEOS);
+            type = getArguments().getString("type");
         }
 
         if (uriStrings == null || uriStrings.isEmpty()) {
@@ -82,6 +85,7 @@ public class PostDetailFragment extends Fragment {
         binding.btnPublish.setOnClickListener(v -> {
             String caption = binding.edtCaptionDetail.getText().toString().trim();
             binding.progressBar.setVisibility(View.VISIBLE);
+            binding.btnPublish.setEnabled(false);
             mViewModel.createPost(caption, userId, musicItem);
             // Sau khi thành công:
 

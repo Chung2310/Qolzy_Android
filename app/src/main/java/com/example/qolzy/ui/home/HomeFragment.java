@@ -59,12 +59,11 @@ public class HomeFragment extends Fragment {
 
     private UserRepository userRepository;
 
-    private int page = 0, size = 30;
+    private int page = 0, size = 5;
 
     private int userId;
     private PostAdapter postAdapter;
     private StoryAdapter storyAdapter;
-    private ExoPlayer exoPlayer;
     private LinearLayoutManager linearLayoutManager;
     private List<Post> posts;
     private PlayerView currentPlayerView;
@@ -78,8 +77,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        exoPlayer = new ExoPlayer.Builder(requireContext()).build();
-        initAutoPlayListener();
         return binding.getRoot();
     }
 
@@ -93,7 +90,7 @@ public class HomeFragment extends Fragment {
 
         userRepository = new UserRepository(requireContext());
 
-        postAdapter = new PostAdapter(new ArrayList<>(), getContext(), exoPlayer);
+        postAdapter = new PostAdapter(new ArrayList<>(), getContext());
         storyAdapter = new StoryAdapter(new ArrayList<>(), getContext());
 
         linearLayoutManager = new LinearLayoutManager(getContext());
@@ -220,42 +217,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void initAutoPlayListener() {
-        binding.recyclerPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    autoPlayVisibleVideo();
-                }
-            }
-        });
-    }
-
-    private void autoPlayVisibleVideo() {
-        int firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
-        int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
-
-        int targetPos = -1;
-        float maxVisibleArea = 0f;
-
-        // tìm bài viết nào hiển thị rõ nhất trên màn hình
-        for (int i = firstVisible; i <= lastVisible; i++) {
-            View child = linearLayoutManager.findViewByPosition(i);
-            if (child != null) {
-                float visibleHeight = getVisibleHeightPercent(child);
-                if (visibleHeight > maxVisibleArea) {
-                    maxVisibleArea = visibleHeight;
-                    targetPos = i;
-                }
-            }
-        }
-
-        if (targetPos != -1 && targetPos != currentPlayingPosition) {
-            playVideoAtPosition(targetPos);
-        }
-    }
 
     private float getVisibleHeightPercent(View view) {
         Rect rect = new Rect();
@@ -264,47 +225,6 @@ public class HomeFragment extends Fragment {
         return visibleHeight / view.getHeight();
     }
 
-    private void playVideoAtPosition(int position) {
-        // Dừng video hiện tại nếu đang phát
-        if (currentPlayerView != null) {
-            currentPlayerView.setPlayer(null);
-            currentPlayerView = null;
-        }
-
-        // Lấy ViewHolder của bài post tại vị trí cần phát
-        RecyclerView.ViewHolder vh = binding.recyclerPosts.findViewHolderForAdapterPosition(position);
-        if (!(vh instanceof PostAdapter.PostViewHolder)) return;
-
-        PostAdapter.PostViewHolder postHolder = (PostAdapter.PostViewHolder) vh;
-        ViewPager2 pager = postHolder.itemView.findViewById(R.id.viewPagerMedia);
-
-        // Lấy vị trí media hiện tại trong ViewPager (đang hiển thị)
-        int currentMediaIndex = pager.getCurrentItem();
-
-        // Lấy RecyclerView bên trong ViewPager2
-        RecyclerView innerRv = (RecyclerView) pager.getChildAt(0);
-        if (innerRv == null) return;
-
-        // Lấy View đang hiển thị (chính là media hiện tại)
-        View currentMediaView = innerRv.getLayoutManager().findViewByPosition(currentMediaIndex);
-        if (currentMediaView == null) return;
-
-        // Tìm PlayerView bên trong media hiện tại (nếu là video)
-        PlayerView playerView = currentMediaView.findViewById(R.id.playerView);
-        if (playerView == null) {
-            // Nếu không có PlayerView → media là ảnh → không phát video
-            exoPlayer.pause();
-            currentPlayingPosition = RecyclerView.NO_POSITION;
-            return;
-        }
-
-        // Gán player và phát
-        currentPlayerView = playerView;
-        currentPlayerView.setPlayer(exoPlayer);
-        exoPlayer.setPlayWhenReady(true);
-
-        currentPlayingPosition = position;
-    }
 
     public void openAccountFragment(User user){
         AccountFragment fragment = new AccountFragment();
@@ -323,21 +243,4 @@ public class HomeFragment extends Fragment {
 
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (exoPlayer != null) {
-            exoPlayer.setPlayWhenReady(false);
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (exoPlayer != null) {
-            exoPlayer.release();
-            exoPlayer = null;
-        }
-    }
 }

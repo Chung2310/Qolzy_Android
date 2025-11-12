@@ -108,7 +108,7 @@ public class StoryDetailFragment extends Fragment {
         // Phát video
         player = new SimpleExoPlayer.Builder(requireContext()).build();
         storyVideo.setPlayer(player);
-        MediaItem item = MediaItem.fromUri(story.getMedia());
+        MediaItem item = MediaItem.fromUri(story.getMedias().getUrl());
         player.setMediaItem(item);
         player.prepare();
         player.play();

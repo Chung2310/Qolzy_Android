@@ -34,15 +34,15 @@ public class AddStoryFragment extends Fragment {
                     Uri uri = res.getData().getData();
 
                     if (uri != null) {
-                        // Story chỉ chọn ảnh
+                        // Story chỉ chọn video
                         ArrayList<String> uris = new ArrayList<>();
                         uris.add(uri.toString());
 
                         ArrayList<Boolean> isVideos = new ArrayList<>();
-                        isVideos.add(false); // luôn false vì chỉ là ảnh
+                        isVideos.add(true); // luôn true vì chỉ là video
 
-                        // Mở PostDetailFragment với 1 ảnh
-                        PostDetailFragment frag = PostDetailFragment.newInstance(uris, isVideos);
+                        // Mở PostDetailFragment với 1 video
+                        PostDetailFragment frag = PostDetailFragment.newInstance(uris, isVideos, "story");
                         requireActivity().getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(((ViewGroup) requireActivity().findViewById(android.R.id.content)).getId(), frag)
@@ -61,18 +61,16 @@ public class AddStoryFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentAddStoryBinding.inflate(inflater, container, false);
 
-        // chỉ chọn ảnh từ gallery
+        // chỉ chọn video từ gallery
         binding.btnChooseFromGallery.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*"); // chỉ cho phép ảnh
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("video/*"); // chỉ cho phép video
             pickLauncher.launch(intent);
         });
 
-        // TODO: mở camera để chụp story
-        binding.btnCamera.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Mở camera (TODO implement)", Toast.LENGTH_SHORT).show();
-        });
 
         return binding.getRoot();
     }
+
+
 }

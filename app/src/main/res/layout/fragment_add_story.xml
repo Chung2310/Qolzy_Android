@@ -16,14 +16,6 @@
         android:textSize="20dp"/>
 
     <Button
-        android:id="@+id/btnCamera"
-        android:layout_width="match_parent"
-        android:textColor="@color/white"
-        android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:text="Mở camera" />
-
-    <Button
         android:id="@+id/btnChooseFromGallery"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:textColor="@color/white"

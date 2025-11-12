@@ -3,7 +3,7 @@ package com.example.qolzy.data.model;
 public class Story {
     private Long id;
     private User user;
-    private String media;
+    private PostMedia medias;
     private int duration;
     private String createAt;
 
@@ -23,12 +23,12 @@ public class Story {
         this.user = user;
     }
 
-    public String getMedia() {
-        return media;
+    public PostMedia getMedias() {
+        return medias;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
+    public void setMedias(PostMedia medias) {
+        this.medias = medias;
     }
 
     public String getCreateAt() {

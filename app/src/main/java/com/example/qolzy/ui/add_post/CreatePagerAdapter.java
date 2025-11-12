@@ -8,7 +8,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.qolzy.ui.add_post.add_post.AddPostEntityFragment;
-import com.example.qolzy.ui.add_post.add_reels.AddReelFragment;
 import com.example.qolzy.ui.add_post.add_story.AddStoryFragment;
 
 public class CreatePagerAdapter extends FragmentStateAdapter {
@@ -22,7 +21,7 @@ public class CreatePagerAdapter extends FragmentStateAdapter {
         switch (position) {
             case 0: return new AddPostEntityFragment();
             case 1: return new AddStoryFragment();
-            case 2: return new AddReelFragment();
+
             default: return new AddPostFragment();
         }
     }

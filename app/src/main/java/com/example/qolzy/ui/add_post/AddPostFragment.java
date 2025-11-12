@@ -48,7 +48,6 @@ public class AddPostFragment extends Fragment {
                     switch (position) {
                         case 0: tab.setText("Bài viết"); break;
                         case 1: tab.setText("Tin"); break;
-                        case 2: tab.setText("Reels"); break;
                     }
                 }).attach();
     }

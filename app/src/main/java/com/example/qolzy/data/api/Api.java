@@ -176,4 +176,6 @@ public interface Api {
     Observable<ResultModel<List<Notification>>> getNotificationByUserId(@Query("page") int page,
                                                                         @Query("size") int size,
                                                                         @Query("userId") Long userId);
+
+
 }

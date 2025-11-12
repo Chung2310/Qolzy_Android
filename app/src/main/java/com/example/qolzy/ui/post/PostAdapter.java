@@ -16,16 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.qolzy.R;
 import com.example.qolzy.data.model.Post;
-import com.example.qolzy.data.model.PostMedia;
 import com.example.qolzy.data.model.User;
+import com.example.qolzy.data.model.PostMedia;
 import com.example.qolzy.ui.music.MediaPlayerManager;
 import com.example.qolzy.ui.music.MusicItem;
 import com.example.qolzy.util.Utils;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -35,9 +33,9 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+
     private List<Post> posts = new ArrayList<>();
     private Context context;
-    private  ExoPlayer exoPlayer;
     boolean[] isMuted = {true};
 
     public interface OnPostActionListener {
@@ -54,10 +52,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.listener = listener;
     }
 
-    public PostAdapter(List<Post> posts, Context context, ExoPlayer exoPlayer) {
+    public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
         this.context = context;
-        this.exoPlayer = exoPlayer;
     }
 
     public void updatePosts(List<Post> newPosts) {
@@ -78,21 +75,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         Post post = posts.get(position);
 
         // Hiển thị tên
-        String fullName;
-        if (post.getUser().getFirstName() == null) {
-            fullName = post.getUser().getLastName();
-        } else {
-            fullName = post.getUser().getFirstName() + " " + post.getUser().getLastName();
-        }
+        String fullName = (post.getUser().getFirstName() != null)
+                ? post.getUser().getFirstName() + " " + post.getUser().getLastName()
+                : post.getUser().getLastName();
         holder.tvUsername.setText(fullName);
         holder.tvLikes.setText(post.getLikes() + " lượt thích");
 
         // Caption
-        if (post.getContent() == null) {
-            holder.tvCaption.setText(fullName + " ");
-        } else {
-            holder.tvCaption.setText(fullName + " " + post.getContent());
-        }
+        holder.tvCaption.setText((post.getContent() != null) ? fullName + " " + post.getContent() : fullName + " ");
 
         // Thời gian
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -112,37 +102,42 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 .load(postAvatarUrl)
                 .placeholder(R.drawable.ic_android_black_24dp)
                 .error(R.drawable.user)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .fitCenter()
                 .into(holder.imgAvatar);
 
+        // Media
         int countMedia = post.getMedias().size();
         if(countMedia > 1){
             holder.txtCountMedia.setVisibility(View.VISIBLE);
-            holder.txtCountMedia.setText("1/"+countMedia);
+            holder.txtCountMedia.setText("1/" + countMedia);
+        } else {
+            holder.txtCountMedia.setVisibility(View.GONE);
         }
 
         if(!post.getFollowByCurrentUser()){
             holder.btnFollow.setVisibility(View.VISIBLE);
         }
 
-        if (post.getMedias() != null){
-            MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias(), exoPlayer);
+        if (post.getMedias() != null && !post.getMedias().isEmpty()) {
+            MediaAdapter mediaAdapter = new MediaAdapter(context, post.getMedias());
             holder.viewPagerMedia.setAdapter(mediaAdapter);
+            
+            holder.txtCountMedia.setText("1/" + countMedia);
 
-            // Theo dõi khi user vuốt sang media mới
+// Khi vuốt sang media mới
             holder.viewPagerMedia.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
-                public void onPageSelected(int mediaPosition) {
-                    super.onPageSelected(mediaPosition);
-                    holder.txtCountMedia.setText((mediaPosition+1)+"/"+countMedia);
-                    exoPlayer.stop();
-                    exoPlayer.clearMediaItems();
-
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    holder.txtCountMedia.setText((position + 1) + "/" + countMedia);
+                    mediaAdapter.playVideoAt(position);
                 }
             });
-        }
 
+// Mặc định play video đầu tiên
+            if (countMedia > 0) {
+                mediaAdapter.playVideoAt(0);
+            }
+        }
 
         // Trạng thái like ban đầu
         holder.btnLike.setImageResource(post.getLikedByCurrentUser() ? R.drawable.love1 : R.drawable.love);
@@ -152,24 +147,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (musicItem != null && musicItem.getAudioUrl() != null && !musicItem.getAudioUrl().isEmpty()) {
             holder.btnMusic.setVisibility(View.VISIBLE);
             holder.btnMusic.setImageResource(R.drawable.ic_volume_mute);
-
         } else {
             holder.btnMusic.setVisibility(View.GONE);
         }
 
-        holder.btnMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isMuted[0]){
-                    MediaPlayerManager.getInstance().stop();
-                    holder.btnMusic.setImageResource(R.drawable.ic_volume_mute);
-                    isMuted[0] = true;
-                }
-                else {
-                    MediaPlayerManager.getInstance().play(context, musicItem.getAudioUrl());
-                    holder.btnMusic.setImageResource(R.drawable.ic_volume_un_mute);
-                    isMuted[0] = false;
-                }
+        holder.btnMusic.setOnClickListener(v -> {
+            if(!isMuted[0]){
+                MediaPlayerManager.getInstance().stop();
+                holder.btnMusic.setImageResource(R.drawable.ic_volume_mute);
+                isMuted[0] = true;
+            } else {
+                MediaPlayerManager.getInstance().play(context, musicItem.getAudioUrl());
+                holder.btnMusic.setImageResource(R.drawable.ic_volume_un_mute);
+                isMuted[0] = false;
             }
         });
 
@@ -192,7 +182,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     // -------------------------------
     // Các hàm xử lý riêng
     // ------------------------------
-
     private void handleLikeClick(Post post, PostViewHolder holder) {
         boolean isLiked = post.getLikedByCurrentUser();
         int current = post.getLikes();
