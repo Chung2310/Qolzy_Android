@@ -158,4 +158,42 @@ public class PostDetailViewModel extends AndroidViewModel {
         return file;
     }
 
+    public void createStory(Context context, Long userId, String s) {
+        Uri uri = Uri.parse(s);
+
+        String mimeType = context.getContentResolver().getType(uri);
+        if (mimeType == null) mimeType = "application/octet-stream";
+
+        // Chuyển Uri thành File tạm trong cache (an toàn với Android 10+)
+        File file = uriToFile(context, uri);
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        compositeDisposable.add(api.createStory(userId, part)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response ->{
+                            statusLiveData.setValue(response.getStatus());
+                            messageLiveData.setValue(response.getMessage());
+                        }, throwable -> {
+                            if (throwable instanceof HttpException) {
+                                HttpException httpEx = (HttpException) throwable;
+                                statusLiveData.setValue(httpEx.code());
+                                try {
+                                    String errorBody = httpEx.response().errorBody().string();
+                                    JSONObject json = new JSONObject(errorBody);
+                                    String serverMessage = json.optString("message", "Lỗi không xác định");
+                                    messageLiveData.setValue(serverMessage);
+                                } catch (Exception e) {
+                                    messageLiveData.setValue("Lỗi khi đọc message từ server");
+                                }
+                            } else {
+                                messageLiveData.setValue("Lỗi: " + throwable.getMessage());
+                                Log.d("LoginViewModel", "Lỗi: " + throwable.getMessage() );
+                            }
+                        }
+                ));
+    }
 }

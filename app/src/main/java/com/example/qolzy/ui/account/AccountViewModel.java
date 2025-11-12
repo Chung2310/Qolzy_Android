@@ -174,4 +174,33 @@ public class AccountViewModel extends AndroidViewModel {
     public MutableLiveData<Integer> getStatusLiveData() {
         return statusLiveData;
     }
+
+    public void createContact(Long userId, Long contactId) {
+        compositeDisposable.add(api.createContact(userId, contactId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response -> {
+                            statusLiveData.setValue(response.getStatus());
+                            messageLiveData.setValue(response.getMessage());
+                        },
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                HttpException httpEx = (HttpException) throwable;
+                                statusLiveData.setValue(httpEx.code());
+                                try {
+                                    String errorBody = httpEx.response().errorBody().string();
+                                    JSONObject json = new JSONObject(errorBody);
+                                    String serverMessage = json.optString("message", "Lỗi không xác định");
+                                    messageLiveData.setValue(serverMessage);
+                                } catch (Exception e) {
+                                    messageLiveData.setValue("Lỗi khi đọc message từ server");
+                                }
+                            } else {
+                                messageLiveData.setValue("Lỗi: " + throwable.getMessage());
+                                Log.d("HomeViewModel", "Lỗi: " + throwable.getMessage());
+                            }
+                        }
+                ));
+    }
 }

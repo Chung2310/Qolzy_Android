@@ -3,7 +3,6 @@ package com.example.qolzy.ui.story;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.ObjectAnimator;
-import android.media.browse.MediaBrowser;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.example.qolzy.R;
 import com.example.qolzy.data.model.Story;
 import com.example.qolzy.databinding.FragmentStoryDetailBinding;
 import com.google.android.exoplayer2.MediaItem;
@@ -108,7 +105,7 @@ public class StoryDetailFragment extends Fragment {
         // Phát video
         player = new SimpleExoPlayer.Builder(requireContext()).build();
         storyVideo.setPlayer(player);
-        MediaItem item = MediaItem.fromUri(story.getMedias().getUrl());
+        MediaItem item = MediaItem.fromUri(story.getMedia().getUrl());
         player.setMediaItem(item);
         player.prepare();
         player.play();

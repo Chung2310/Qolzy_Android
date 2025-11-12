@@ -26,7 +26,6 @@ import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -176,6 +175,12 @@ public interface Api {
     Observable<ResultModel<List<Notification>>> getNotificationByUserId(@Query("page") int page,
                                                                         @Query("size") int size,
                                                                         @Query("userId") Long userId);
+    @Multipart
+    @POST("story")
+    Observable<ResultModel<String>> createStory(@Query("userId") Long userId,
+                                                @Part MultipartBody.Part file);
 
-
+    @POST("contact")
+    Observable<ResultModel<String>> createContact(@Query("userId") Long userId,
+                                                  @Query("contactId") Long contactId);
 }

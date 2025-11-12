@@ -31,6 +31,7 @@ import com.example.qolzy.activity.AuthActivity;
 import com.example.qolzy.databinding.FragmentAccountBinding;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.repository.UserRepository;
+import com.example.qolzy.ui.message.DetailMessageFragment;
 import com.example.qolzy.util.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -69,13 +70,19 @@ public class AccountFragment extends Fragment {
 
         if (getArguments() != null) {
             user = (User) getArguments().getSerializable("USER");
-            binding.btnEditProfile.setVisibility(View.INVISIBLE);
-            binding.btnShareProfile.setVisibility(View.INVISIBLE);
-            binding.btnSignOut.setVisibility(View.INVISIBLE);
-            binding.btnDetailMessage.setVisibility(View.VISIBLE);
-        } else {
-            userId = (long) userRepository.getUserId();
+        }
+
+        userId = (long) userRepository.getUserId();
+
+        if(userId == user.getId()){
+            binding.btnEditProfile.setVisibility(View.VISIBLE);
+            binding.btnShareProfile.setVisibility(View.VISIBLE);
             binding.btnDetailMessage.setVisibility(View.INVISIBLE);
+            binding.btnDetailMessage.setEnabled(true);
+        } else {
+            binding.btnDetailMessage.setVisibility(View.VISIBLE);
+            binding.btnEditProfile.setVisibility(View.INVISIBLE);
+            binding.btnShareProfile.setVisibility(View.VISIBLE);
         }
 
         return root;
@@ -147,25 +154,45 @@ public class AccountFragment extends Fragment {
     }
 
     public void events() {
-        binding.btnSignOut.setOnClickListener(v ->{
-            userRepository.clearUser();
-            FirebaseAuth.getInstance().signOut();
-            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(
-                    getContext(),
-                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-            );
-            googleSignInClient.signOut().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d("LOGOUT", "Đăng xuất Google thành công");
-
-                    Intent intent = new Intent(getContext(), AuthActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            });
-        });
+//        binding.btnSignOut.setOnClickListener(v ->{
+//            userRepository.clearUser();
+//            FirebaseAuth.getInstance().signOut();
+//            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(
+//                    getContext(),
+//                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+//            );
+//            googleSignInClient.signOut().addOnCompleteListener(task -> {
+//                if (task.isSuccessful()) {
+//                    Log.d("LOGOUT", "Đăng xuất Google thành công");
+//
+//                    Intent intent = new Intent(getContext(), AuthActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }
+//            });
+//        });
         binding.imgProfileAvatar.setOnClickListener(v -> {
             showFullImageDialog(getContext(), "avatar");
+        });
+
+        binding.btnDetailMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DetailMessageFragment fragment = new DetailMessageFragment();
+
+                mViewModel.createContact(userId, user.getId());
+
+                Bundle args = new Bundle();
+                args.putSerializable("contact", user);
+                fragment.setArguments(args);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
         });
     }
 

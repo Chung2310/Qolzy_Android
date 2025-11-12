@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.qolzy.R;
-import com.example.qolzy.data.model.Post;
 import com.example.qolzy.data.model.Story;
-import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.util.Utils;
 
 import java.util.List;

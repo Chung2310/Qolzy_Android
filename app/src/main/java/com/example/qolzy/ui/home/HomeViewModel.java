@@ -62,7 +62,7 @@ public class HomeViewModel extends AndroidViewModel {
 
                             if (response.getStatus() == 200 && response.getResult() != null) {
                                 postsLiveData.setValue(response.getResult());
-                                Log.d("HomeViewModel", "Size list: " + response.getResult().size());
+                                Log.d("HomeViewModelPost", "Size list: " + response.getResult().size());
                             }
                         },
                         throwable -> {
@@ -79,7 +79,7 @@ public class HomeViewModel extends AndroidViewModel {
                                 }
                             } else {
                                 messageLiveData.setValue("Lỗi: " + throwable.getMessage());
-                                Log.d("HomeViewModel", "Lỗi: " + throwable.getMessage() );
+                                Log.d("HomeViewModelPost", "Lỗi: " + throwable.getMessage() );
                             }
                         }
                 ));
@@ -112,11 +112,6 @@ public class HomeViewModel extends AndroidViewModel {
                         response -> {
                             statusLiveData.setValue(response.getStatus());
                             messageLiveData.setValue(response.getMessage());
-
-                            if (response.getStatus() == 200 && response.getResult() != null) {
-                                storiesLiveData.setValue(response.getResult());
-                                Log.d("HomeViewModel", "Size list: " + response.getResult().size());
-                            }
                         },
                         throwable -> {
                             if (throwable instanceof HttpException) {
@@ -131,8 +126,8 @@ public class HomeViewModel extends AndroidViewModel {
                                     messageLiveData.setValue("Lỗi khi đọc message từ server");
                                 }
                             } else {
-                                messageLiveData.setValue("Lỗi: " + throwable.getMessage());
-                                Log.d("HomeViewModel", "Lỗi: " + throwable.getMessage() );
+                                messageLiveData.setValue("Lỗi Story: " + throwable.getMessage());
+                                Log.d("HomeViewModelStory", "Lỗi: " + throwable.getMessage() );
                             }
                         }
                 ));

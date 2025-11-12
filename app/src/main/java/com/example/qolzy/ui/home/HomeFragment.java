@@ -1,36 +1,24 @@
 package com.example.qolzy.ui.home;
 
-import static com.example.qolzy.R.id.nav_host_fragment;
-import static com.example.qolzy.R.id.recyclerPosts;
-
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.qolzy.R;
-import com.example.qolzy.data.model.Contact;
 import com.example.qolzy.data.model.Post;
 import com.example.qolzy.data.model.Story;
 import com.example.qolzy.data.model.User;
@@ -43,9 +31,7 @@ import com.example.qolzy.ui.notification.NotificationFragment;
 import com.example.qolzy.ui.post.PostAdapter;
 import com.example.qolzy.ui.story.StoryAdapter;
 import com.example.qolzy.ui.story.StoryDetailFragment;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.Serializable;
 import java.util.ArrayList;

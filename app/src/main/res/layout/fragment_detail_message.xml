@@ -69,6 +69,14 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
     <!-- RecyclerView hiển thị tin nhắn -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMessages"

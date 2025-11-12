@@ -181,14 +181,6 @@
                         android:weightSum="3"
                         android:paddingTop="8dp">
 
-                        <Button
-                            android:id="@+id/btnSignOut"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/black"
-                            android:layout_height="38dp"
-                            android:text="Đăng xuất"/>
 
                         <Button
                             android:id="@+id/btnEditProfile"
@@ -196,6 +188,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:textColor="@color/black"
+                            android:visibility="invisible"
                             android:layout_height="wrap_content"
                             android:text="Chỉnh sửa trang cá nhân"/>
 

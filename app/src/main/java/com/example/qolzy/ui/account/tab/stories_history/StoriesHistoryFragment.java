@@ -13,10 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.qolzy.R;
 import com.example.qolzy.data.model.Story;
 import com.example.qolzy.databinding.FragmentStoriesHistoryBinding;
-import com.example.qolzy.ui.account.tab.posts_history.PostsHistoryFragment;
 import com.example.qolzy.ui.story.StoryAdapter;
 
 import java.util.ArrayList;

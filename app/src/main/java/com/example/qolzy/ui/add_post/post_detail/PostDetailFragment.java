@@ -37,7 +37,6 @@ public class PostDetailFragment extends Fragment {
     private UserRepository userRepository;
     private ArrayList<String> uriStrings;
     private ArrayList<Boolean> isVideos;
-
     private View bubbleView;
     private MediaPlayer mediaPlayer;
     String type = null;
@@ -82,14 +81,26 @@ public class PostDetailFragment extends Fragment {
         DetailMediaPagerAdapter pagerAdapter = new DetailMediaPagerAdapter(uriStrings, isVideos);
         binding.viewPagerPreview.setAdapter(pagerAdapter);
         Long userId = (long) userRepository.getUserId();
-        binding.btnPublish.setOnClickListener(v -> {
-            String caption = binding.edtCaptionDetail.getText().toString().trim();
-            binding.progressBar.setVisibility(View.VISIBLE);
-            binding.btnPublish.setEnabled(false);
-            mViewModel.createPost(caption, userId, musicItem);
-            // Sau khi thành công:
 
-        });
+        if(type.equals("story")){
+            binding.edtCaptionDetail.setVisibility(View.INVISIBLE);
+            binding.btnPublish.setOnClickListener(v -> {
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.btnPublish.setEnabled(false);
+                mViewModel.createStory(getContext() ,userId, uriStrings.get(0));
+                // Sau khi thành công:
+            });
+        }
+        else {
+            binding.btnPublish.setOnClickListener(v -> {
+                String caption = binding.edtCaptionDetail.getText().toString().trim();
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.btnPublish.setEnabled(false);
+                mViewModel.createPost(caption, userId, musicItem);
+                // Sau khi thành công:
+            });
+        }
+
 
         mViewModel.getPostIdLiveData().observe(getViewLifecycleOwner(), postId ->{
             mViewModel.createPostFile(requireContext(), Long.parseLong(postId), uriStrings);

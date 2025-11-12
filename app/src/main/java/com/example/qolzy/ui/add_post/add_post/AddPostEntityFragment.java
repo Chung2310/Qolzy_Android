@@ -92,7 +92,7 @@ public class AddPostEntityFragment extends Fragment {
             ArrayList<String> uriStrings = new ArrayList<>();
             for (Uri u : selectedUris) uriStrings.add(u.toString());
 
-            PostDetailFragment frag = PostDetailFragment.newInstance(uriStrings, (ArrayList<Boolean>) selectedIsVideos);
+            PostDetailFragment frag = PostDetailFragment.newInstance(uriStrings, (ArrayList<Boolean>) selectedIsVideos, "post");
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(((ViewGroup) requireActivity().findViewById(android.R.id.content)).getId(), frag)
