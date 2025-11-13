@@ -108,13 +108,13 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onUsernameClicked(User user) {
-                openAccountFragment(user);
+            public void onUsernameClicked(User user, Boolean followByCurrentUser) {
+                openAccountFragment(user, followByCurrentUser);
             }
 
             @Override
-            public void onAvatarClicked(User user) {
-                openAccountFragment(user);
+            public void onAvatarClicked(User user, Boolean followByCurrentUser) {
+                openAccountFragment(user, followByCurrentUser);
             }
 
             @Override
@@ -212,12 +212,13 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public void openAccountFragment(User user){
+    public void openAccountFragment(User user, Boolean followByCurrentUser){
         AccountFragment fragment = new AccountFragment();
 
 // truyền userId qua Bundle
         Bundle args = new Bundle();
         args.putSerializable("USER", user);
+        args.putBoolean("followByCurrentUser", followByCurrentUser);
         fragment.setArguments(args);
 
 // mở fragment

@@ -103,7 +103,9 @@ public class UserRepository {
     }
 
     public int getUserId(){
-        return (int) prefs.getLong(KEY_ID, 0);
+        int id = (int) prefs.getLong(KEY_ID, 0);
+        Log.d("UserPrefs", "ID: " + id);
+        return id;
     }
 
     public String getAccessToken(){

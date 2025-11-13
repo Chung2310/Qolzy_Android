@@ -41,8 +41,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public interface OnPostActionListener {
         void onLikeClicked(Long postId);
         void onCommentClicked(Long postId);
-        void onUsernameClicked(User user);
-        void onAvatarClicked(User user);
+        void onUsernameClicked(User user,Boolean followByCurrentUser);
+        void onAvatarClicked(User user,Boolean followByCurrentUser);
         void onFollowClicked(Long followingId);
     }
 
@@ -170,8 +170,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.btnFollow.setVisibility(View.INVISIBLE);
             handleFollowClick(post.getUser().getId());
         });
-        holder.imgAvatar.setOnClickListener(v -> handleUserClick(post.getUser()));
-        holder.tvUsername.setOnClickListener(v -> handleUserClick(post.getUser()));
+        holder.imgAvatar.setOnClickListener(v -> handleUserClick(post.getUser(), post.getFollowByCurrentUser()));
+        holder.tvUsername.setOnClickListener(v -> handleUserClick(post.getUser(), post.getFollowByCurrentUser()));
     }
 
     @Override
@@ -210,10 +210,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
     }
 
-    private void handleUserClick(User user) {
+    private void handleUserClick(User user, Boolean followByCurrentUser) {
         if (listener != null) {
-            listener.onUsernameClicked(user);
-            listener.onAvatarClicked(user);
+            listener.onUsernameClicked(user, followByCurrentUser);
+            listener.onAvatarClicked(user, followByCurrentUser);
         }
     }
 

@@ -173,12 +173,39 @@
                         android:textStyle="bold"
                         android:textSize="14sp" />
 
+                    <LinearLayout
+                        android:id="@+id/linearLayoutOtherUser"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <Button
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:id="@+id/btnFollow"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/black"
+                            android:text="Theo dõi" />
+                        <Button
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:id="@+id/btnDetailMessage"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/black"
+                            android:text="Nhắn tin" />
+                    </LinearLayout>
+
                     <!-- Buttons row -->
                     <LinearLayout
+                        android:id="@+id/linearLayoutCurrentUser"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="horizontal"
-                        android:weightSum="3"
+                        android:weightSum="2"
                         android:paddingTop="8dp">
 
 
@@ -188,7 +215,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:textColor="@color/black"
-                            android:visibility="invisible"
+
                             android:layout_height="wrap_content"
                             android:text="Chỉnh sửa trang cá nhân"/>
 
@@ -201,16 +228,7 @@
                             android:layout_marginStart="8dp"
                             android:textColor="@color/black"
                             android:text="Chia sẻ" />
-                        <Button
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:id="@+id/btnDetailMessage"
-                            android:layout_width="0dp"
-                            android:layout_height="38dp"
-                            android:layout_weight="1"
-                            android:visibility="invisible"
-                            android:layout_marginStart="8dp"
-                            android:textColor="@color/black"
-                            android:text="Nhắn tin" />
+
                     </LinearLayout>
                 </LinearLayout>
 

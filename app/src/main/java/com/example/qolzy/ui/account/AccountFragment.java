@@ -54,6 +54,7 @@ public class AccountFragment extends Fragment {
     private User user;
     private Long userId;
     private FirebaseAuth mAuth;
+    private Boolean followByCurrentUser;
 
     public static AccountFragment newInstance() {
         return new AccountFragment();
@@ -70,19 +71,24 @@ public class AccountFragment extends Fragment {
 
         if (getArguments() != null) {
             user = (User) getArguments().getSerializable("USER");
+            followByCurrentUser = getArguments().getBoolean("followByCurrentUser");
         }
 
         userId = (long) userRepository.getUserId();
 
-        if(userId == user.getId()){
-            binding.btnEditProfile.setVisibility(View.VISIBLE);
-            binding.btnShareProfile.setVisibility(View.VISIBLE);
-            binding.btnDetailMessage.setVisibility(View.INVISIBLE);
-            binding.btnDetailMessage.setEnabled(true);
+        if(user == null){
+            binding.linearLayoutOtherUser.setVisibility(View.GONE);
+            binding.linearLayoutCurrentUser.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.linearLayoutOtherUser.setVisibility(View.VISIBLE);
+            binding.linearLayoutCurrentUser.setVisibility(View.GONE);
+        }
+
+        if(followByCurrentUser == null){
+
         } else {
-            binding.btnDetailMessage.setVisibility(View.VISIBLE);
-            binding.btnEditProfile.setVisibility(View.INVISIBLE);
-            binding.btnShareProfile.setVisibility(View.VISIBLE);
+            binding.btnFollow.setText("Đã Theo dõi");
         }
 
         return root;
