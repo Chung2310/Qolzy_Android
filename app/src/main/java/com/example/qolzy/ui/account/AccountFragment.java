@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -89,6 +90,8 @@ public class AccountFragment extends Fragment {
 
         } else {
             binding.btnFollow.setText("Đã Theo dõi");
+            binding.btnFollow.setTextColor(Color.BLACK);
+            binding.btnFollow.setBackgroundColor(Color.WHITE);
         }
 
         return root;
