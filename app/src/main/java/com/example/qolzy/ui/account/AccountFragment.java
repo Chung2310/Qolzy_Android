@@ -19,10 +19,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,28 +30,29 @@ import com.example.qolzy.activity.AuthActivity;
 import com.example.qolzy.databinding.FragmentAccountBinding;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.repository.UserRepository;
+import com.example.qolzy.ui.account.edit_profile.EditProfileFragment;
+import com.example.qolzy.ui.home.HomeViewModel;
 import com.example.qolzy.ui.message.DetailMessageFragment;
 import com.example.qolzy.util.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class AccountFragment extends Fragment {
 
     private AccountViewModel mViewModel;
+    private HomeViewModel homeViewModel;
     private FragmentAccountBinding binding;
 
     private static final int REQUEST_CODE_PICK_IMAGE = 1001;
 
     private String currentUploadMode = "";
     private UserRepository userRepository;
-    private User user;
-    private Long userId;
+    private User user; // currently displayed user (may be null until loaded)
+    private Long targetUserId; // id của user đang xem (có thể là chính chủ hoặc người khác)
+    private Long currentUserId; // id của user đăng nhập
     private FirebaseAuth mAuth;
     private Boolean followByCurrentUser;
 
@@ -70,29 +69,39 @@ public class AccountFragment extends Fragment {
         userRepository = new UserRepository(getContext());
         mAuth = FirebaseAuth.getInstance();
 
-        if (getArguments() != null) {
-            user = (User) getArguments().getSerializable("USER");
-            followByCurrentUser = getArguments().getBoolean("followByCurrentUser");
+        // Lấy current user id từ repository (được dùng để so sánh)
+        currentUserId = (userRepository != null) ? Long.valueOf(userRepository.getUserId()) : null;
+
+        // Đọc arguments: hỗ trợ 2 kiểu truyền: USER object hoặc USER_ID
+        Bundle args = getArguments();
+        if (args != null) {
+            if (args.containsKey("USER")) {
+                Object obj = args.getSerializable("USER");
+                if (obj instanceof User) {
+                    user = (User) obj;
+                    if (user.getId() != null) {
+                        targetUserId = user.getId();
+                    }
+                }
+            }
+            if (args.containsKey("USER_ID")) {
+                // ưu tiên USER_ID nếu có
+                long id = args.getLong("USER_ID", (currentUserId != null) ? currentUserId : -1L);
+                if (id >= 0) targetUserId = id;
+            }
+            if (args.containsKey("followByCurrentUser")) {
+                followByCurrentUser = args.getBoolean("followByCurrentUser");
+            }
         }
 
-        userId = (long) userRepository.getUserId();
-
-        if(user == null){
-            binding.linearLayoutOtherUser.setVisibility(View.GONE);
-            binding.linearLayoutCurrentUser.setVisibility(View.VISIBLE);
-        }
-        else {
-            binding.linearLayoutOtherUser.setVisibility(View.VISIBLE);
-            binding.linearLayoutCurrentUser.setVisibility(View.GONE);
+        // Nếu không có arguments, coi là mở profile chính chủ
+        if (targetUserId == null) {
+            targetUserId = currentUserId;
         }
 
-        if(followByCurrentUser == null){
-
-        } else {
-            binding.btnFollow.setText("Đã Theo dõi");
-            binding.btnFollow.setTextColor(Color.BLACK);
-            binding.btnFollow.setBackgroundColor(Color.WHITE);
-        }
+        // Set UI tạm (progress hoặc content sẽ set thật sau khi load)
+        binding.layoutContent.setVisibility(View.GONE);
+        binding.progressBar.setVisibility(View.VISIBLE);
 
         return root;
     }
@@ -101,33 +110,53 @@ public class AccountFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(AccountViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
+        // load dữ liệu user theo targetUserId
+        loadUserAndSetup();
+
+        homeViewModel.getMessageLiveData().observe(getViewLifecycleOwner(), message ->{
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void loadUserAndSetup() {
         ProgressBar progressBar = binding.progressBar;
         View layoutContent = binding.layoutContent;
 
-        // Nếu user đã có sẵn từ arguments
-        if (user != null) {
+        // Nếu đã có user (được truyền qua args), nhưng user.getId() khác targetUserId thì cần reload
+        if (user != null && user.getId() != null && user.getId().equals(targetUserId)) {
+            // có sẵn, hiển thị luôn
             progressBar.setVisibility(View.GONE);
             layoutContent.setVisibility(View.VISIBLE);
 
+            showAppropriateLayout();
             showDataUser();
             setupViewPager();
             events();
         } else {
-            // Hiển thị ProgressBar trước khi load user từ API
+            // load từ API theo targetUserId
             progressBar.setVisibility(View.VISIBLE);
             layoutContent.setVisibility(View.GONE);
 
-            mViewModel.getUserDetail(userId);
+            if (targetUserId == null) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Không xác định được user để hiển thị", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mViewModel.getUserDetail(targetUserId);
+            // Nếu observer đã tồn tại từ lần trước, remove để tránh multiple observers (an toàn)
+            mViewModel.getUserMutableLiveData().removeObservers(getViewLifecycleOwner());
             mViewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), response -> {
                 if (response != null) {
                     user = response;
                     userRepository.saveUser(user);
 
-                    // Sau khi load xong, ẩn ProgressBar và show content
                     progressBar.setVisibility(View.GONE);
                     layoutContent.setVisibility(View.VISIBLE);
 
+                    showAppropriateLayout();
                     showDataUser();
                     setupViewPager();
                     events();
@@ -139,8 +168,24 @@ public class AccountFragment extends Fragment {
         }
     }
 
+    /**
+     * Hiển thị layout phù hợp: nếu targetUserId == currentUserId -> layout chính chủ
+     * Ngược lại -> layout người khác
+     */
+    private void showAppropriateLayout() {
+        boolean isCurrentUser = (currentUserId != null && targetUserId != null && currentUserId.equals(targetUserId));
+
+        if (isCurrentUser) {
+            binding.linearLayoutCurrentUser.setVisibility(View.VISIBLE);
+            binding.linearLayoutOtherUser.setVisibility(View.GONE);
+        } else {
+            binding.linearLayoutCurrentUser.setVisibility(View.GONE);
+            binding.linearLayoutOtherUser.setVisibility(View.VISIBLE);
+        }
+    }
 
     private void setupViewPager() {
+        // Adapter nên xử lý user có thể null (nếu chưa load xong)
         AccountPagerAdapter adapter = new AccountPagerAdapter(requireActivity(), user);
         binding.viewPager.setAdapter(adapter);
 
@@ -163,44 +208,71 @@ public class AccountFragment extends Fragment {
     }
 
     public void events() {
-//        binding.btnSignOut.setOnClickListener(v ->{
-//            userRepository.clearUser();
-//            FirebaseAuth.getInstance().signOut();
-//            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(
-//                    getContext(),
-//                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-//            );
-//            googleSignInClient.signOut().addOnCompleteListener(task -> {
-//                if (task.isSuccessful()) {
-//                    Log.d("LOGOUT", "Đăng xuất Google thành công");
-//
-//                    Intent intent = new Intent(getContext(), AuthActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                }
-//            });
-//        });
+        // Click vào avatar để xem ảnh fullscreen
         binding.imgProfileAvatar.setOnClickListener(v -> {
             showFullImageDialog(getContext(), "avatar");
         });
 
-        binding.btnDetailMessage.setOnClickListener(new View.OnClickListener() {
+        binding.btnDetailMessage.setOnClickListener(view -> {
+            if (user == null || user.getId() == null || currentUserId == null) {
+                Toast.makeText(getContext(), "Không thể tạo liên hệ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            DetailMessageFragment fragment = new DetailMessageFragment();
+
+            // createContact sử dụng currentUserId (người gửi) và user.getId() (người nhận)
+            mViewModel.createContact(currentUserId, user.getId());
+
+            Bundle args = new Bundle();
+            args.putSerializable("contact", user);
+            fragment.setArguments(args);
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        binding.btnEditProfile.setOnClickListener(view -> {
+            // Chỉ cho edit nếu đang xem chính chủ
+            boolean isCurrentUser = (currentUserId != null && targetUserId != null && currentUserId.equals(targetUserId));
+            if (!isCurrentUser) {
+                Toast.makeText(getContext(), "Không thể chỉnh sửa profile người khác", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            EditProfileFragment fragment = new EditProfileFragment();
+
+            // để EditProfile tiện thao tác, truyền user hiện tại
+            Bundle args = new Bundle();
+            args.putSerializable("USER", user);
+            fragment.setArguments(args);
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        binding.btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DetailMessageFragment fragment = new DetailMessageFragment();
-
-                mViewModel.createContact(userId, user.getId());
-
-                Bundle args = new Bundle();
-                args.putSerializable("contact", user);
-                fragment.setArguments(args);
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                homeViewModel.toggleFollow(currentUserId, targetUserId);
+                if (followByCurrentUser){
+                    binding.btnFollow.setText("Theo dõi");
+                    binding.btnFollow.setTextColor(Color.BLACK);
+                    binding.btnFollow.setBackgroundColor(Color.BLUE);
+                    followByCurrentUser = false;
+                }
+                else {
+                    binding.btnFollow.setText("Đã Theo dõi");
+                    binding.btnFollow.setTextColor(Color.BLACK);
+                    binding.btnFollow.setBackgroundColor(Color.WHITE);
+                    followByCurrentUser = true;
+                }
             }
         });
     }
@@ -237,6 +309,24 @@ public class AccountFragment extends Fragment {
         binding.tvPostsCount.setText(String.valueOf(user.getPostCount()));
         binding.tvFollowersCount.setText(String.valueOf(user.getFollowersCount() != null ? user.getFollowersCount() : 0));
         binding.tvFollowingCount.setText(String.valueOf(user.getFollowingCount() != null ? user.getFollowingCount() : 0));
+        if (user.getBio() != null) {
+            binding.tvUserBio.setVisibility(View.VISIBLE);
+            binding.tvUserBio.setText(user.getBio());
+        } else {
+            binding.tvUserBio.setVisibility(View.GONE);
+        }
+        boolean isCurrentUser = (currentUserId != null && targetUserId != null && currentUserId.equals(targetUserId));
+        if (!isCurrentUser) {
+            if (followByCurrentUser != null && followByCurrentUser) {
+                binding.btnFollow.setText("Đã Theo dõi");
+                binding.btnFollow.setTextColor(Color.BLACK);
+                binding.btnFollow.setBackgroundColor(Color.WHITE);
+            } else {
+                binding.btnFollow.setText("Theo dõi");
+                binding.btnFollow.setTextColor(Color.BLACK);
+                binding.btnFollow.setBackgroundColor(Color.BLUE);
+            }
+        }
     }
 
     @Override
@@ -245,7 +335,7 @@ public class AccountFragment extends Fragment {
         if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             if (imageUri != null) {
-                // 🔥 Bạn tự viết gọi viewModel.uploadImage
+                // TODO: gọi viewModel.uploadImage nếu cần
                 // viewModel.uploadImage(requireContext(), imageUri, currentUploadMode);
             }
         }
@@ -274,5 +364,12 @@ public class AccountFragment extends Fragment {
 
         imageView.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    // Nếu fragment có thể được reuse và cần forcibly reload (ví dụ sau khi edit profile xong và popBackStack),
+    // bạn có thể gọi public method này từ activity hoặc fragment gọi để reload dữ liệu:
+    public void reloadIfNeeded() {
+        // forces reload from server for current targetUserId
+        loadUserAndSetup();
     }
 }

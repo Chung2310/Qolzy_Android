@@ -22,6 +22,7 @@ public class UserRepository {
     private static final String KEY_POST_COUNT = "PostCount";
     private static final String KEY_FOLLOWING_COUNT = "UserFollowing";
     private static final String KEY_FOLLOWER_COUNT = "UserFollower";
+    private static final String KEY_BIO = "UserBio";
 
     private final SharedPreferences prefs;
 
@@ -45,6 +46,7 @@ public class UserRepository {
         editor.putString(KEY_CREATE_AT, user.getCreateAt());
         editor.putString(KEY_USER_NAME, user.getUserName());
         editor.putInt(KEY_POST_COUNT, user.getPostCount());
+        editor.putString(KEY_BIO, user.getBio());
 
         // Thêm log cho tất cả trường
         Log.d("UserPrefs", "Saving user:");
@@ -62,6 +64,7 @@ public class UserRepository {
         Log.d("UserPrefs", "Create At: " + user.getCreateAt());
         Log.d("UserPrefs", "Post Count :" + user.getPostCount());
         Log.d("UserPrefs", "User Mame : " + user.getUserName());
+        Log.d("UserPrefs", "User Bio : " + user.getBio());
 
         editor.apply();
     }
@@ -82,6 +85,7 @@ public class UserRepository {
         Long follower = prefs.getLong(KEY_FOLLOWER_COUNT, 0);
         Long following = prefs.getLong(KEY_FOLLOWING_COUNT, 0);
         String createAt = prefs.getString(KEY_CREATE_AT, null);
+        String bio = prefs.getString(KEY_BIO, null);
 
         Log.d("UserPrefs", "Loaded user:");
         Log.d("UserPrefs", "ID: " + id);
@@ -97,9 +101,10 @@ public class UserRepository {
         Log.d("UserPrefs", "User Name: " + userName);
         Log.d("UserPrefs", "Following Count: " + following);
         Log.d("UserPrefs", "Follower Count: " + follower);
+        Log.d("UserPrefs", "User Bio: " + bio);
 
         return new User(id, firstName, lastName, accessToken ,email, phone, address, avatar, 
-                refreshToken,userName,postCount, follower, following, createAt);
+                refreshToken,userName,postCount, follower, following, createAt, bio);
     }
 
     public int getUserId(){

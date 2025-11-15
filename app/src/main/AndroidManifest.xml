@@ -32,6 +32,7 @@
         <activity
             android:name="com.example.qolzy.activity.AuthActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="DuplicateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +42,7 @@
         </activity>
 
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name="com.example.qolzy.activity.MainActivity"
             android:exported="false" />
     </application>

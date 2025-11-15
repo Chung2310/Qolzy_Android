@@ -183,4 +183,9 @@ public interface Api {
     @POST("contact")
     Observable<ResultModel<String>> createContact(@Query("userId") Long userId,
                                                   @Query("contactId") Long contactId);
+
+    @PUT("user")
+    Observable<ResultModel<String>> updateUserProfile(@Query("userId") Long userId,
+                                                      @Query("name") String name,
+                                                      @Query("bio") String bio);
 }

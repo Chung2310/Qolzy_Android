@@ -17,13 +17,13 @@ public class User implements Serializable {
     private int postCount;
     private Long followersCount;
     private Long followingCount;
-
+    private String bio;
     private String createAt;
 
     public User(Long id, String firstName, String lastName, String token, String email,
                 String phone, String address, String avatarUrl, String refreshToken,
                 String userName, int postCount, Long followersCount, Long followingCount,
-                String createAt) {
+                String createAt, String bio) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,6 +38,7 @@ public class User implements Serializable {
         this.followersCount = followersCount;
         this.followingCount = followingCount;
         this.createAt = createAt;
+        this.bio = bio;
     }
 
     public Long getId() {
@@ -46,6 +47,14 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getFirstName() {
