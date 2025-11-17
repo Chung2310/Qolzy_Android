@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,10 +24,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
     private List<User> userList;
     private Context context;
+    private OnSearchUserActionListener listener;
 
     public SearchAdapter(List<User> userList, Context context) {
         this.userList = userList;
         this.context = context;
+    }
+
+    public interface OnSearchUserActionListener {
+        void onClicked(User user,Boolean followByCurrentUser);
+    }
+
+    public void setOnSearchActionListener(OnSearchUserActionListener listener) {
+        this.listener = listener;
     }
 
     public void updateUserSearch(List<User> newUsers) {
@@ -69,6 +79,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         holder.tvNameSearch.setText(displayName != null ? displayName : "Unknown");
         holder.tvUserNameSearch.setText(user.getUserName() != null ? user.getUserName() : "Unknown");
+
+        holder.contactMainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onClicked(user, user.getFollowByCurrentUser());
+            }
+        });
     }
 
     @Override
@@ -79,11 +96,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     public class SearchViewHolder extends RecyclerView.ViewHolder{
         private CircleImageView imgAvatarSearch;
         private TextView tvNameSearch, tvUserNameSearch;
+        private LinearLayout contactMainLayout;
         public SearchViewHolder(@NonNull View itemView) {
             super(itemView);
             imgAvatarSearch = itemView.findViewById(R.id.imgAvatarSearch);
             tvNameSearch = itemView.findViewById(R.id.tvNameSearch);
             tvUserNameSearch = itemView.findViewById(R.id.tvUserNameSearch);
+            contactMainLayout = itemView.findViewById(R.id.contactMainLayout);
         }
     }
 }

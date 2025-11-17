@@ -5,6 +5,7 @@ import com.example.qolzy.data.model.Comment;
 import com.example.qolzy.data.model.CommentRequest;
 import com.example.qolzy.data.model.Contact;
 import com.example.qolzy.data.model.CreatePostRequest;
+import com.example.qolzy.data.model.FollowResponse;
 import com.example.qolzy.data.model.LoginRequest;
 import com.example.qolzy.data.model.LoginRequestFirebase;
 import com.example.qolzy.data.model.Message;
@@ -169,7 +170,7 @@ public interface Api {
     Observable<ResultModel<String>> sendMessage(@Body MessageRequest messageRequest);
 
     @GET("user/search")
-    Observable<ResultModel<List<User>>> searchUser(@Query("keySearch") String keySearch);
+    Observable<ResultModel<List<User>>> searchUser(@Query("userId") Long userId,@Query("keySearch") String keySearch);
 
     @GET("notification")
     Observable<ResultModel<List<Notification>>> getNotificationByUserId(@Query("page") int page,
@@ -188,4 +189,14 @@ public interface Api {
     Observable<ResultModel<String>> updateUserProfile(@Query("userId") Long userId,
                                                       @Query("name") String name,
                                                       @Query("bio") String bio);
+
+    @GET("follow/er")
+    Observable<ResultModel<List<FollowResponse>>> getFollowerByUserId(@Query("userId") Long userId,
+                                                                      @Query("page") int page,
+                                                                      @Query("size") int size);
+
+    @GET("follow/ing")
+    Observable<ResultModel<List<FollowResponse>>> getFollowingByUserId(@Query("userId") Long userId,
+                                                            @Query("page") int page,
+                                                            @Query("size") int size);
 }

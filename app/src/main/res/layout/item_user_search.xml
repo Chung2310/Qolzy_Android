@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:id="@+id/contactMainLayout"
     android:layout_height="wrap_content"
-    android:paddingStart="12dp"
+    android:padding="5dp"
     android:orientation="horizontal"
+    android:paddingStart="12dp"
     android:paddingEnd="10dp">
 
     <!-- Avatar -->
@@ -15,36 +16,47 @@
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:scaleType="centerCrop"
-        android:contentDescription="avatar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:padding="2dp"/>
 
     <LinearLayout
         android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_weight="1"
+        android:paddingStart="12dp">
+
         <TextView
             android:id="@+id/tvNameSearch"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nguyễn Văn A"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textStyle="bold"/>
 
-            android:layout_marginStart="12dp"/>
         <TextView
             android:id="@+id/tvUserNameSearch"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nguyễn Văn A"
+            android:text="NguyenVanA"
             android:textSize="10dp"
-            android:textStyle="bold"
-            android:layout_marginStart="12dp"/>
+            android:textStyle="bold"/>
     </LinearLayout>
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:visibility="gone"
+        android:id="@+id/btnMessager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:text="Nhắn tin"
+        android:background="@drawable/bg_unselected_genre"/>
 
-
+    <ImageButton
+        android:visibility="gone"
+        android:id="@+id/btnExtend"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_move_vert"
+        android:background="@drawable/bg_unselected_genre"/>
 </LinearLayout>

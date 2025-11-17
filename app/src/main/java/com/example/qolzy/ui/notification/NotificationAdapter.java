@@ -1,4 +1,4 @@
-package com.example.qolzy.ui.home;
+package com.example.qolzy.ui.notification;
 
 import android.content.Context;
 import android.os.Build;
@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.qolzy.R;
 import com.example.qolzy.data.model.Notification;
-import com.example.qolzy.data.model.Post;
 import com.example.qolzy.util.Utils;
 
 import java.time.Duration;

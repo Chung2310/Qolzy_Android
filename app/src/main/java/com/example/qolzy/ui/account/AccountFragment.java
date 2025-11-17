@@ -31,6 +31,7 @@ import com.example.qolzy.databinding.FragmentAccountBinding;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.ui.account.edit_profile.EditProfileFragment;
+import com.example.qolzy.ui.follow.FollowFragment;
 import com.example.qolzy.ui.home.HomeViewModel;
 import com.example.qolzy.ui.message.DetailMessageFragment;
 import com.example.qolzy.util.Utils;
@@ -275,6 +276,35 @@ public class AccountFragment extends Fragment {
                 }
             }
         });
+
+        binding.layoutFollower.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFollowFragment();
+            }
+        });
+
+        binding.layoutFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFollowFragment();
+            }
+        });
+    }
+
+    public void openFollowFragment(){
+        FollowFragment fragment = new FollowFragment();
+
+        // để EditProfile tiện thao tác, truyền user hiện tại
+        Bundle args = new Bundle();
+        args.putSerializable("USER", user);
+        fragment.setArguments(args);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void showDataUser() {

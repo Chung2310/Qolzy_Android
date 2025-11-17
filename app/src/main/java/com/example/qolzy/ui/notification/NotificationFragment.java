@@ -13,12 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.qolzy.R;
 import com.example.qolzy.activity.MainActivity;
 import com.example.qolzy.data.model.Notification;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.databinding.FragmentNotificationBinding;
-import com.example.qolzy.ui.home.NotificationAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

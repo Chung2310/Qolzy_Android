@@ -20,6 +20,8 @@ public class User implements Serializable {
     private String bio;
     private String createAt;
 
+    private Boolean followByCurrentUser;
+
     public User(Long id, String firstName, String lastName, String token, String email,
                 String phone, String address, String avatarUrl, String refreshToken,
                 String userName, int postCount, Long followersCount, Long followingCount,
@@ -159,5 +161,13 @@ public class User implements Serializable {
 
     public void setPostCount(int postCount) {
         this.postCount = postCount;
+    }
+
+    public Boolean getFollowByCurrentUser() {
+        return followByCurrentUser;
+    }
+
+    public void setFollowByCurrentUser(Boolean followByCurrentUser) {
+        this.followByCurrentUser = followByCurrentUser;
     }
 }
