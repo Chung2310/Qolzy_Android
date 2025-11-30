@@ -15,6 +15,7 @@ import com.example.qolzy.util.Utils;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -112,10 +113,20 @@ public class HomeViewModel extends AndroidViewModel {
                         response -> {
                             statusLiveData.setValue(response.getStatus());
                             messageLiveData.setValue(response.getMessage());
+                            if (response.getStatus() == 200 && response.getResult() != null) {
+                                storiesLiveData.setValue(response.getResult());
+                                Log.d("HomeViewModelStory", "Size story list: " + response.getResult().size());
+                            }
+                            else {
+                                storiesLiveData.setValue(new ArrayList<>());
+                                Log.d("HomeViewModelStory", "Size story list: " + response.getResult().size());
+                            }
+
                         },
                         throwable -> {
                             if (throwable instanceof HttpException) {
                                 HttpException httpEx = (HttpException) throwable;
+                                throwable.printStackTrace();
                                 statusLiveData.setValue(httpEx.code());
                                 try {
                                     String errorBody = httpEx.response().errorBody().string();

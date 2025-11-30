@@ -116,6 +116,15 @@ public class UserRepository {
     public String getAccessToken(){
         return prefs.getString(KEY_TOKEN_ACCESS, null);
     }
+    public void saveAccessToken(String accessToken){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_TOKEN_ACCESS, accessToken);
+    }
+
+    public void saveRefreshToken(String refreshToken){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_TOKEN_REFRESH, refreshToken);
+    }
 
     public String getRefreshToken(){
         return prefs.getString(KEY_TOKEN_REFRESH, null);

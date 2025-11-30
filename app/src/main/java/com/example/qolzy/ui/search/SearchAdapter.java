@@ -56,13 +56,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     public void onBindViewHolder(@NonNull SearchAdapter.SearchViewHolder holder, int position) {
         User user = userList.get(position);
 
-        String newUrl = Utils.BASE_URL.replace("/api/", "/");
+        String newUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = null;
 
         if (user.getAvatarUrl() != null) {
             postAvatarUrl = user.getAvatarUrl().contains("https")
                     ? user.getAvatarUrl()
-                    : newUrl + "avatar/" + user.getAvatarUrl();
+                    : newUrl  + user.getAvatarUrl();
         }
 
         Glide.with(context)

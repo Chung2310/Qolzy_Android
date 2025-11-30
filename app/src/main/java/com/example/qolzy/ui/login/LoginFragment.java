@@ -121,7 +121,7 @@ public class LoginFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 bundle.putLong("userId", user.getId());
-
+                binding.progressBar.setVisibility(View.GONE);
                 userRepository.saveUser(user);
 
                 NavController navController = NavHostFragment.findNavController(this);
@@ -136,6 +136,7 @@ public class LoginFragment extends Fragment {
                 if (Objects.equals(role, "ROLE_ADMIN")) {
                     // startActivity(new Intent(requireContext(), AdminActivity.class));
                 } else {
+                    binding.progressBar.setVisibility(View.GONE);
                     startActivity(new Intent(requireContext(), MainActivity.class));
                 }
 
@@ -174,6 +175,7 @@ public class LoginFragment extends Fragment {
         binding.btnGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                binding.progressBar.setVisibility(View.VISIBLE);
                 signIn();
             }
         });

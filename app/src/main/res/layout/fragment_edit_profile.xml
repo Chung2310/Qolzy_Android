@@ -62,7 +62,23 @@
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp" />
-
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/tvErrorUploadImage"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:text="Tải ảnh thất bái"
+                android:textColor="#3F51B5"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp" />
             <!-- Input fields -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -74,26 +90,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Tên người dùng"-->
-<!--                android:layout_marginTop="8dp">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/tvStatus"-->
-<!--                    android:text="..."-->
-<!--                    android:layout_gravity="center_horizontal"-->
-<!--                    android:layout_marginTop="8dp"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"/>-->
-
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/edtUsername"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content" />-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -114,51 +110,6 @@
                 android:layout_marginVertical="16dp"
                 android:background="@color/black" />
 
-<!--            <TextView-->
-<!--                android:text="Thông tin cá nhân"-->
-<!--                android:textStyle="bold"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:layout_marginBottom="8dp" />-->
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Email">-->
-
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/edtEmail"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:inputType="textEmailAddress" />-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Số điện thoại"-->
-<!--                android:layout_marginTop="8dp">-->
-
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/edtPhone"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:inputType="phone" />-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="Địa chỉ"-->
-<!--                android:layout_marginTop="8dp">-->
-
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/edtAddress"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:inputType="textPostalAddress" /> &lt;!&ndash; ✅ Đổi inputType đúng kiểu &ndash;&gt;-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -182,6 +182,8 @@ public class SplashFragment extends Fragment {
         viewModel.getRefreshTokenRequestMutableLiveData().observe(getViewLifecycleOwner(), response -> {
             if (response != null) {
                 String newAccessToken = response.getAccessToken();
+                userRepository.saveAccessToken(newAccessToken);
+                userRepository.saveRefreshToken(response.getRefreshToken());
                 nextRole = getRoleFromToken(newAccessToken);
             } else {
                 goLogin = true;

@@ -34,6 +34,7 @@ import com.example.qolzy.ui.account.edit_profile.EditProfileFragment;
 import com.example.qolzy.ui.follow.FollowFragment;
 import com.example.qolzy.ui.home.HomeViewModel;
 import com.example.qolzy.ui.message.DetailMessageFragment;
+import com.example.qolzy.ui.setting.SettingFragment;
 import com.example.qolzy.util.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -290,6 +291,24 @@ public class AccountFragment extends Fragment {
                 openFollowFragment();
             }
         });
+
+        binding.btnToolbarOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingFragment settingFragment = new SettingFragment();
+
+                // để EditProfile tiện thao tác, truyền user hiện tại
+                Bundle args = new Bundle();
+                args.putSerializable("USER", user);
+                settingFragment.setArguments(args);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, settingFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     public void openFollowFragment(){
@@ -313,14 +332,16 @@ public class AccountFragment extends Fragment {
             return;
         }
 
-        String newUrl = Utils.BASE_URL.replace("/api/", "/");
+        String newUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = null;
 
         if (user.getAvatarUrl() != null) {
             postAvatarUrl = user.getAvatarUrl().contains("https")
                     ? user.getAvatarUrl()
-                    : newUrl + "avatar/" + user.getAvatarUrl();
+                    : newUrl + user.getAvatarUrl();
         }
+
+        Log.d("AccountFragment", postAvatarUrl);
 
         Glide.with(getContext())
                 .load(postAvatarUrl)
@@ -359,26 +380,14 @@ public class AccountFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            if (imageUri != null) {
-                // TODO: gọi viewModel.uploadImage nếu cần
-                // viewModel.uploadImage(requireContext(), imageUri, currentUploadMode);
-            }
-        }
-    }
-
     public void showFullImageDialog(Context context, String mode) {
         if (user == null || user.getAvatarUrl() == null) return;
 
-        String imageUrl = Utils.BASE_URL.replace("/api/", "/");
+        String imageUrl = Utils.BASE_URL.replace("/api/", "");
         if (mode.equals("avatar")) {
             imageUrl = user.getAvatarUrl().contains("https")
                     ? user.getAvatarUrl()
-                    : imageUrl + "avatar/" + user.getAvatarUrl();
+                    : imageUrl + user.getAvatarUrl();
         }
 
         Log.d("AvatarUrl", "Image URL: " + imageUrl);
@@ -396,10 +405,5 @@ public class AccountFragment extends Fragment {
         dialog.show();
     }
 
-    // Nếu fragment có thể được reuse và cần forcibly reload (ví dụ sau khi edit profile xong và popBackStack),
-    // bạn có thể gọi public method này từ activity hoặc fragment gọi để reload dữ liệu:
-    public void reloadIfNeeded() {
-        // forces reload from server for current targetUserId
-        loadUserAndSetup();
-    }
+
 }

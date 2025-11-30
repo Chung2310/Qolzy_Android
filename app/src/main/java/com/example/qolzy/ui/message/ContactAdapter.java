@@ -85,7 +85,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = contact.getUserContact().getAvatarUrl().contains("https")
                 ? contact.getUserContact().getAvatarUrl()
-                : fixedUrl + "avatar/" + contact.getUserContact().getAvatarUrl();
+                : fixedUrl  + contact.getUserContact().getAvatarUrl();
 
         Log.d("AvatarUrl", postAvatarUrl);
         Glide.with(context)

@@ -2,15 +2,14 @@ package com.example.qolzy.ui.account.edit_profile;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import android.graphics.Color;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +29,8 @@ public class EditProfileFragment extends Fragment {
     private EditProfileViewModel mViewModel;
     private FragmentEditProfileBinding binding;
     private User user;
+    private static final int PICK_IMAGE_REQUEST = 101;
+    private Uri selectedImageUri;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -63,6 +64,14 @@ public class EditProfileFragment extends Fragment {
 
         });
 
+        binding.tvChangePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openImagePicker();
+                binding.tvErrorUploadImage.setVisibility(View.GONE);
+            }
+        });
+
         // Show update message
         mViewModel.getMessageLivedata().observe(getViewLifecycleOwner(), msg -> {
             Toast.makeText(getContext(), msg +"", Toast.LENGTH_SHORT).show();
@@ -78,11 +87,11 @@ public class EditProfileFragment extends Fragment {
     private void showDataUser() {
         if (user == null) return;
 
-        String baseUrl = Utils.BASE_URL.replace("/api/", "/");
+        String baseUrl = Utils.BASE_URL.replace("/api/", "");
         String avatarUrl = user.getAvatarUrl() != null
                 ? (user.getAvatarUrl().contains("https")
                 ? user.getAvatarUrl()
-                : baseUrl + "avatar/" + user.getAvatarUrl())
+                : baseUrl + user.getAvatarUrl())
                 : null;
 
         Glide.with(requireContext())
@@ -100,6 +109,29 @@ public class EditProfileFragment extends Fragment {
 
         binding.edtName.setText(fullName);
         binding.edtBio.setText(user.getBio() != null ? user.getBio() : "");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null && data.getData() != null) {
+            selectedImageUri = data.getData();
+
+            // Hiển thị ảnh lên ImageView tạm thời
+            binding.imgAvatar.setImageURI(selectedImageUri);
+
+            // Upload lên Firebase Storage
+            mViewModel.updateUserAvatar(getContext(),user.getId(), selectedImageUri.toString());
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), PICK_IMAGE_REQUEST);
     }
 
     private boolean isValidUsername(String username) {

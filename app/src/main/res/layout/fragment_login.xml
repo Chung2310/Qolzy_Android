@@ -43,6 +43,14 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
@@ -62,13 +70,6 @@
         android:background="@drawable/vien_vuong"
         android:layout_margin="16dp"/>
 
-<!--    <TextView-->
-<!--        android:id="@+id/tvRegister"-->
-<!--        -->
-<!--        android:text="Chưa có tài khoản? Đăng ký"-->
-<!--        android:textColor="#FF0F00"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content" />-->
+
 
 </LinearLayout>

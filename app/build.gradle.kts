@@ -66,6 +66,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")
@@ -112,8 +113,9 @@ dependencies {
 
     // LibPhoneNumber
     implementation("com.googlecode.libphonenumber:libphonenumber:8.13.36")
-
     implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -63,7 +63,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = story.getUser().getAvatarUrl().contains("https")
                 ? story.getUser().getAvatarUrl()
-                : fixedUrl + "avatar/" + story.getUser().getAvatarUrl();
+                : fixedUrl + story.getUser().getAvatarUrl();
 
         Log.d("AvatarUrl", postAvatarUrl);
         Glide.with(context)

@@ -1,7 +1,17 @@
 package com.example.qolzy;
 
+import static com.example.qolzy.util.NotificationHelper.showNotification;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.qolzy.data.model.Notification;
 import com.example.qolzy.data.repository.UserRepository;
@@ -10,17 +20,27 @@ import com.example.qolzy.util.Utils;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class QolzyApp extends Application {
     private static final String TAG = "WebSocket";
     private WebSocket webSocket;
+    private StompClient stompClient;
     private final Gson gson = new Gson();
     private UserRepository userRepository;
+    private static final int REQ_NOTIFY = 1001;
 
     @Override
     public void onCreate() {
@@ -33,33 +53,59 @@ public class QolzyApp extends Application {
 
         // Lấy user hiện tại
         userRepository = new UserRepository(getApplicationContext());
-        Long userId = userRepository.getUser().getId();
 
-        connectWebSocket(userId);
+        connectStomp();
+//        connectWebSocket(userId);
     }
 
-    private void connectWebSocket(Long userId) {
+    @SuppressLint("CheckResult")
+    private void connectStomp() {
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
-        String wsUrl = fixedUrl + "/chat/websocket";
+        String fixedUrlWs = fixedUrl.replace("https", "wss");
+        String wsUrl = fixedUrlWs + "/chat/websocket";
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(wsUrl).build();
+        stompClient = Stomp.over(
+                Stomp.ConnectionProvider.OKHTTP,
+                wsUrl
+        );
+        stompClient.withClientHeartbeat(10000)
+                .withServerHeartbeat(10000);
 
-        webSocket = client.newWebSocket(request, new WebSocketListener() {
-            @Override
-            public void onOpen(WebSocket webSocket, Response response) {
-                Log.d(TAG, "✅ Connected to WebSocket");
-                // Khi server yêu cầu subscribe, bạn có thể gửi message đăng ký topic
-                String subscribeMsg = String.format("{\"command\":\"subscribe\",\"destination\":\"/user/%d/queue/notifications\"}", userId);
-                webSocket.send(subscribeMsg);
+
+        stompClient.lifecycle().subscribe(event ->{
+            switch (event.getType()) {
+                case OPENED:
+                    Log.d(TAG, "✅ STOMP CONNECTED");
+                    subscribeNotification();
+                    break;
+
+                case ERROR:
+                    Log.e(TAG, "❌ STOMP ERROR", event.getException());
+                    break;
+
+                case CLOSED:
+                    Log.w(TAG, "🔌 STOMP CLOSED");
+                    break;
             }
+        });
 
-            @Override
-            public void onMessage(WebSocket webSocket, String text) {
-                Log.d(TAG, "📩 Received: " + text);
+        List<StompHeader> headers = new ArrayList<>();
+        headers.add(new StompHeader("user-id", String.valueOf(userRepository.getUserId())));
+        stompClient.connect(headers);
+    }
 
-                try {
-                    Notification notification = gson.fromJson(text, Notification.class);
+
+    @SuppressLint("CheckResult")
+    private void subscribeNotification() {
+        stompClient.topic("/user/queue/notifications") // queue dành cho user riêng
+                .subscribe(stompMessage -> {
+                    String payload = stompMessage.getPayload();
+                    Log.d(TAG, "📩 Received notification: " + payload);
+
+                    // Parse payload JSON
+                    Notification notification =
+                            new Gson().fromJson(payload, Notification.class);
+
                     String messageNotification = "";
 
                     if ("follow".equals(notification.getType())) {
@@ -70,38 +116,11 @@ public class QolzyApp extends Application {
                         messageNotification = notification.getSender().getUserName() + " đã trả lời bình luận của bạn";
                     }
 
-                    NotificationHelper.createNotificationChannel(getApplicationContext());
-                    NotificationHelper.showNotification(
-                            getApplicationContext(),
-                            "Thông báo mới",
-                            messageNotification
-                    );
-                } catch (Exception e) {
-                    Log.e(TAG, "⚠️ Error parsing message: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                if (response != null) {
-                    try {
-                        Log.e(TAG, "❌ WebSocket Error: code=" + response.code() + ", message=" + response.message());
-                    } catch (Exception e) {
-                        Log.e(TAG, "❌ WebSocket Error: " + e.getMessage());
-                    }
-                } else {
-                    Log.e(TAG, "❌ WebSocket Error (no response): " + (t != null ? t.getMessage() : "unknown"));
-                }
-            }
-
-            @Override
-            public void onClosed(WebSocket webSocket, int code, String reason) {
-                Log.w(TAG, "🔌 WebSocket closed: " + reason);
-            }
-        });
-
-        client.dispatcher().executorService().shutdown();
+                    showNotification(getApplicationContext(), "Thông báo mới", messageNotification);
+                });
     }
+
+
 
     @Override
     public void onTerminate() {

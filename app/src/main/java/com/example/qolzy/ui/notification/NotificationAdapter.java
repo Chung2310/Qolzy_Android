@@ -59,7 +59,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = notification.getSender().getAvatarUrl().contains("https")
                 ? notification.getSender().getAvatarUrl()
-                : fixedUrl + "avatar/" + notification.getSender().getAvatarUrl();
+                : fixedUrl  + notification.getSender().getAvatarUrl();
 
         Log.d("AvatarUrl", postAvatarUrl);
         Glide.with(context)
@@ -77,6 +77,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             messageNotification = notification.getSender().getUserName() + " đã bình luận về bài viết của bạn";
         } else if ("comment-reply".equals(notification.getType())) {
             messageNotification = notification.getSender().getUserName() + " đã trả lời bình luận của bạn";
+        } else if ("post".equals(notification.getType())){
+            messageNotification = notification.getSender().getUserName() + " đã thích bài viết của bạn";
         }
 
         holder.tvTitle.setText(messageNotification+"");

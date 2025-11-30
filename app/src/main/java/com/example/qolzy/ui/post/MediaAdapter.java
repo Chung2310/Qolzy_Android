@@ -119,7 +119,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             notifyItemChanged(currentPlayingPosition);
         }
         currentPlayingPosition = position;
-        notifyItemChanged(position);
+
     }
 
     @Override

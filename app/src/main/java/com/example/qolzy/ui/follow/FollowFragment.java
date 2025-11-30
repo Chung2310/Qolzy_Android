@@ -53,7 +53,8 @@ public class FollowFragment extends Fragment {
         binding.toolbarFollow.setNavigationOnClickListener(v -> {
             requireActivity().getSupportFragmentManager().popBackStack();
         });
-        // TODO: Use the ViewModel
+
+
     }
 
     private void setupViewPager() {

@@ -87,7 +87,7 @@ public class DetailMessageFragment extends Fragment {
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
         String avatarUrl = contact.getAvatarUrl().contains("https")
                 ? contact.getAvatarUrl()
-                : fixedUrl + "avatar/" + contact.getAvatarUrl();
+                : fixedUrl + contact.getAvatarUrl();
 
         Log.d("AvatarUrl", avatarUrl);
         Glide.with(requireContext())

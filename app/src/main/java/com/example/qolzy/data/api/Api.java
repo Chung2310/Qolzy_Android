@@ -199,4 +199,9 @@ public interface Api {
     Observable<ResultModel<List<FollowResponse>>> getFollowingByUserId(@Query("userId") Long userId,
                                                             @Query("page") int page,
                                                             @Query("size") int size);
+
+    @Multipart
+    @POST("user/avt")
+    Observable<ResultModel<String>> updateAvatarUser(@Query("userId") Long id,
+                                                     @Part MultipartBody.Part file);
 }

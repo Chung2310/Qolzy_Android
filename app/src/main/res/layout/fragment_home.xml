@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- AppBarLayout chứa Toolbar -->
+    <!-- AppBar / Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-        android:layout_marginTop="5dp"
         android:fitsSystemWindows="true">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:background="@color/white"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
 
             <LinearLayout
-                android:id="@+id/layoutHeader"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
@@ -34,75 +30,48 @@
                 android:paddingHorizontal="8dp">
 
                 <ImageView
-                    android:id="@+id/logo"
-                    android:layout_marginTop="2dp"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/logo_qolzy"
-                    android:contentDescription="@string/app_name" />
+                    android:src="@drawable/logo_qolzy"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:layout_marginEnd="5dp">
+                    android:gravity="end">
 
                     <ImageView
                         android:id="@+id/btnNotification"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginEnd="12dp"
-                        android:src="@drawable/love" />
+                        android:src="@drawable/love"/>
 
                     <ImageView
                         android:id="@+id/btnMessager"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/messenger_64"
-                     />
+                        android:src="@drawable/messenger_64"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Nội dung scroll -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <!-- RecyclerView DUY NHẤT scroll -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPosts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Story -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerStories"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:padding="8dp"
-
-                android:clipToPadding="false"
-                android:overScrollMode="never"/>
-
-            <!-- Feed -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerPosts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    <!-- Progress load more -->
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -38,6 +38,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private Context context;
     boolean[] isMuted = {true};
 
+
+
     public interface OnPostActionListener {
         void onLikeClicked(Long postId);
         void onCommentClicked(Long postId);
@@ -62,6 +64,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.posts.addAll(newPosts);
         notifyDataSetChanged();
     }
+
+    public void addPosts(List<Post> newPosts) {
+        int start = this.posts.size();
+        this.posts.addAll(newPosts);
+        notifyItemRangeInserted(start, newPosts.size());
+    }
+
 
     @NonNull
     @Override
@@ -95,7 +104,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         String fixedUrl = Utils.BASE_URL.replace("/api/", "");
         String postAvatarUrl = post.getUser().getAvatarUrl().contains("https")
                 ? post.getUser().getAvatarUrl()
-                : fixedUrl + "avatar/" + post.getUser().getAvatarUrl();
+                : fixedUrl + post.getUser().getAvatarUrl();
 
         Log.d("AvatarUrl", postAvatarUrl);
         Glide.with(context)
