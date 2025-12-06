@@ -49,6 +49,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     private Long replyParentId = null;
     private String replyUserName = null;
     private int level = 0;
+    private String mode;
 
 
     @Nullable
@@ -107,8 +108,10 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
         // Nhận postId truyền từ adapter
         postId = getArguments() != null ? getArguments().getLong("postId") : -1;
+        mode = getArguments() != null ? getArguments().getString("mode") : null;
+
         if (postId != -1) {
-            commentViewModel.loadCommentParent(postId, userId, page, size);
+            commentViewModel.loadCommentParent(mode , postId, userId, page, size);
         }
 
         btnSend.setOnClickListener(v -> {
@@ -137,7 +140,12 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                 commentRequest.setUserId(userId);
                 commentRequest.setPostId(postId);
 
-                commentViewModel.createCommentParent(commentRequest);
+                if (mode.equals("post")){
+                    commentViewModel.createCommentParent(commentRequest);
+                } else {
+                    commentViewModel.createCommentForReel(commentRequest);
+                }
+
 
                 // Reset
                 edtComment.setText("");
@@ -145,7 +153,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                 replyParentId = null;
                 replyUserName = null;
 
-                commentViewModel.loadCommentParent(postId, userId, page,size);
+                commentViewModel.loadCommentParent(mode,postId, userId, page,size);
 
             }
         });

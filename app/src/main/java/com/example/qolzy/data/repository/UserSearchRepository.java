@@ -53,4 +53,8 @@ public class UserSearchRepository {
         // Lưu lại
         prefs.edit().putString(KEY_HISTORY, gson.toJson(list)).apply();
     }
+
+    public void clear(){
+        prefs.edit().clear().apply();
+    }
 }

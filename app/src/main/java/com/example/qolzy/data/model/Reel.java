@@ -1,6 +1,4 @@
-package com.example.qolzy.ui.reels;
-
-import com.example.qolzy.data.model.User;
+package com.example.qolzy.data.model;
 
 public class Reel {
     private Long id;
@@ -11,7 +9,7 @@ public class Reel {
     private int likes;
     private int comment;
     private int views;
-    private boolean isLikeReel = false;
+    private boolean likeByCurrentUser = false;
 
     public Long getId() {
         return id;
@@ -77,11 +75,11 @@ public class Reel {
         this.views = views;
     }
 
-    public boolean isLikeReel() {
-        return isLikeReel;
+    public boolean isLikeByCurrentUser() {
+        return likeByCurrentUser;
     }
 
-    public void setLikeReel(boolean likeReel) {
-        isLikeReel = likeReel;
+    public void setLikeByCurrentUser(boolean likeByCurrentUser) {
+        this.likeByCurrentUser = likeByCurrentUser;
     }
 }

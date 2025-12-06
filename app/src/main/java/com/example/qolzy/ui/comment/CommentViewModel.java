@@ -85,8 +85,8 @@ public class CommentViewModel extends AndroidViewModel {
                 ));
     }
 
-    public void loadCommentParent(Long postId,Long userId ,int page, int size){
-        compositeDisposable.add(api.loadCommentByPostId(postId, userId, page,size)
+    public void loadCommentParent(String mode,Long postId,Long userId ,int page, int size){
+        compositeDisposable.add(api.loadCommentByPostId(postId, mode, userId, page,size)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -155,6 +155,35 @@ public class CommentViewModel extends AndroidViewModel {
 
     public void createCommentParent(CommentRequest commentRequest){
         compositeDisposable.add(api.createCommentParent(commentRequest)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response ->{
+                            statusLiveData.setValue(response.getStatus());
+                            messageLiveData.setValue(response.getMessage());
+                        },
+                        throwable -> {
+                            if (throwable instanceof HttpException) {
+                                HttpException httpEx = (HttpException) throwable;
+                                statusLiveData.setValue(httpEx.code());
+                                try {
+                                    String errorBody = httpEx.response().errorBody().string();
+                                    JSONObject json = new JSONObject(errorBody);
+                                    String serverMessage = json.optString("message", "Lỗi không xác định");
+                                    messageLiveData.setValue(serverMessage);
+                                } catch (Exception e) {
+                                    messageLiveData.setValue("Lỗi khi đọc message từ server");
+                                }
+                            } else {
+                                messageLiveData.setValue("Lỗi: " + throwable.getMessage());
+                                Log.d("HomeViewModel", "Lỗi: " + throwable.getMessage() );
+                            }
+                        }
+                ));
+    }
+
+    public void createCommentForReel(CommentRequest commentRequest){
+        compositeDisposable.add(api.createCommentForeReel(commentRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

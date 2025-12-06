@@ -17,6 +17,7 @@ import com.example.qolzy.R;
 import com.example.qolzy.activity.AuthActivity;
 import com.example.qolzy.activity.MainActivity;
 import com.example.qolzy.data.repository.UserRepository;
+import com.example.qolzy.data.repository.UserSearchRepository;
 import com.example.qolzy.databinding.FragmentSettingBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,6 +30,7 @@ public class SettingFragment extends Fragment {
     private SettingViewModel mViewModel;
     private FragmentSettingBinding binding;
     private UserRepository userRepository;
+    private UserSearchRepository userSearchRepository;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -39,6 +41,7 @@ public class SettingFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentSettingBinding.inflate(inflater, container, false);
         userRepository = new UserRepository(getContext());
+        userSearchRepository = new UserSearchRepository(getContext());
         return binding.getRoot();
     }
 
@@ -59,7 +62,7 @@ public class SettingFragment extends Fragment {
                 // Firebase sign out
                 FirebaseAuth.getInstance().signOut();
                 userRepository.clearUser();
-
+                userSearchRepository.clear();
                 // Chuyển sang AuthActivity
                 Intent intent = new Intent(requireActivity(), AuthActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |

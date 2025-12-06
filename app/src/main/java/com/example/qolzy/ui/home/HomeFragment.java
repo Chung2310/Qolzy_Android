@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment {
                 CommentsBottomSheet bottomSheet = new CommentsBottomSheet();
                 Bundle args = new Bundle();
                 args.putLong("postId", postId);
+                args.putString("mode", "post");
                 bottomSheet.setArguments(args);
                 bottomSheet.show(getChildFragmentManager(), "CommentsBottomSheet");
             }

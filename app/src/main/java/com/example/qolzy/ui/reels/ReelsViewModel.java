@@ -5,10 +5,10 @@ import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.qolzy.data.api.Api;
 import com.example.qolzy.data.api.RetrofitClient;
+import com.example.qolzy.data.model.Reel;
 import com.example.qolzy.util.Utils;
 
 import org.json.JSONObject;

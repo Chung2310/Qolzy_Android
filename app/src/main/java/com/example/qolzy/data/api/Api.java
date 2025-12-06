@@ -19,11 +19,10 @@ import com.example.qolzy.data.model.Story;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.data.model.UserUpdateRequest;
 import com.example.qolzy.ui.music.MusicResponse;
-import com.example.qolzy.ui.reels.Reel;
+import com.example.qolzy.data.model.Reel;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
@@ -110,13 +109,19 @@ public interface Api {
     // api comment
     @GET("comment/{postId}")
     Observable<ResultModel<List<Comment>>> loadCommentByPostId(
+
             @Path("postId") Long postId,
+            @Query("mode") String mode,
             @Query("userId") Long userId,
             @Query("page") int page,
             @Query("size") int size);
 
     @POST("comment")
     Observable<ResultModel<String>> createCommentParent(
+            @Body CommentRequest commentRequest);
+
+    @POST("comment/reel")
+    Observable<ResultModel<String>> createCommentForeReel(
             @Body CommentRequest commentRequest);
 
     @GET("comment/replies/{commentId}")

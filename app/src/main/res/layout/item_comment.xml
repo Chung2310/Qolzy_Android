@@ -57,30 +57,40 @@
                 android:text="Nội dung comment"
                 app:layout_constraintTop_toBottomOf="@id/layoutHeader"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btnLike"
+                app:layout_constraintEnd_toStartOf="@id/layoutLike"
                 app:layout_constraintHorizontal_bias="0"
                 android:layout_marginTop="4dp" />
 
             <!-- Icon like (phải) -->
-            <ImageView
-                android:id="@+id/btnLike"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/love"
+
+
+            <LinearLayout
+                android:id="@+id/layoutLike"
                 app:layout_constraintTop_toTopOf="@id/txtContent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginStart="8dp" />
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/btnLike"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/love"
+                    android:layout_gravity="center_horizontal" />
+                <TextView
+                    android:id="@+id/tvLikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/btnLike"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
 
             <!-- Lượt thích (ngay dưới icon like) -->
-            <TextView
-                android:id="@+id/tvLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="100 lượt thích"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/btnLike"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="2dp" />
 
             <!-- Nút trả lời -->
             <TextView

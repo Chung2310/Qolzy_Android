@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="80dp">
+            android:layout_marginBottom="8dp">
 
             <!-- User -->
             <LinearLayout
@@ -89,38 +89,59 @@
         android:orientation="vertical"
         android:gravity="end|bottom"
         android:layout_gravity="end|bottom"
-        android:padding="16dp"
-        android:layout_marginBottom="80dp">
+        android:padding="10dp"
+        android:layout_marginBottom="8dp">
 
         <ImageView
             android:id="@+id/btnLike"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/love"
-            android:layout_marginBottom="24dp"
+            android:layout_gravity="center_horizontal"
             app:tint="@android:color/white" />
-
+        <TextView
+            android:id="@+id/tvLike"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/btnComment"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_comment"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
             app:tint="@android:color/white" />
-
+        <TextView
+            android:id="@+id/tvComment"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/btnShare"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="30dp"
+            android:visibility="gone"
             android:src="@drawable/ic_share"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
             app:tint="@android:color/white" />
-
+        <TextView
+            android:id="@+id/tvShare"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <!-- Avatar xoay cho nhạc -->
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgMusicAvatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginTop="10dp"
             android:src="@drawable/ic_music"
             android:scaleType="centerCrop" />
     </LinearLayout>
