@@ -13,11 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.qolzy.R;
 import com.example.qolzy.activity.MainActivity;
 import com.example.qolzy.data.model.Notification;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.databinding.FragmentNotificationBinding;
+import com.example.qolzy.ui.post.PostDetailFragment;
+import com.example.qolzy.ui.story.StoryDetailFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +69,23 @@ public class NotificationFragment extends Fragment {
             if(response.size() > 0){
                 binding.progressBar.setVisibility(View.INVISIBLE);
                 adapter.updateNotifications(response);
+            }
+        });
+
+        adapter.setOnNotificationlistener(new NotificationAdapter.OnNotificationListener() {
+            @Override
+            public void onClicker(String action, Long actionId) {
+                PostDetailFragment postDetailFragment = new PostDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("action", action);
+                bundle.putLong("actionId", actionId);
+                bundle.putString("from", "notification");
+                postDetailFragment.setArguments(bundle);
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, postDetailFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }

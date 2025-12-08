@@ -74,6 +74,10 @@ public class ContactFragment extends Fragment {
 
         ProgressBar progressBar = binding.progressBar;
 
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+
         mViewModel.getContactsLiveData().observe(getViewLifecycleOwner(), contactsResponse -> {
             if(contactsResponse.size() != 0 || !isSearch){
                 adapter.updateContacts(contactsResponse);

@@ -44,7 +44,19 @@
         <activity
             android:windowSoftInputMode="adjustResize"
             android:name="com.example.qolzy.activity.MainActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <!-- Deep link format -->
+                <data
+                    android:scheme="https"
+                    android:host="qolzy.com"
+                    android:pathPrefix="/profile" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

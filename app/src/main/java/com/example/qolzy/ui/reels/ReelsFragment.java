@@ -44,6 +44,7 @@ public class ReelsFragment extends Fragment {
     private int size = 5;
     private HomeViewModel homeViewModel;
     private PagerSnapHelper snapHelper;
+    private LinearLayoutManager layoutManager;
 
     public static ReelsFragment newInstance() {
         return new ReelsFragment();
@@ -106,7 +107,7 @@ public class ReelsFragment extends Fragment {
     private void playSnapPosition() {
         if (binding == null) return;
 
-        LinearLayoutManager layoutManager =
+        layoutManager =
                 (LinearLayoutManager) binding.recyclerReels.getLayoutManager();
         if (layoutManager == null) return;
 
@@ -167,6 +168,31 @@ public class ReelsFragment extends Fragment {
                 openAccountFragment(user, followByCurrentUser);
             }
         });
+
+        binding.recyclerReels.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if(dy <= 0 ) return;
+
+                int visible = layoutManager.getChildCount();
+                int total = layoutManager.getItemCount();
+                int first = layoutManager.findFirstVisibleItemPosition();
+
+                if((visible+first) >= total){
+                    loadMoreReels();
+                }
+            }
+        });
+    }
+
+    private void loadMoreReels() {
+        page++;
+        viewModel.getReels(
+                (long) userRepository.getUserId(),
+                page,
+                size);
     }
 
     public void openAccountFragment(User user, Boolean followByCurrentUser) {

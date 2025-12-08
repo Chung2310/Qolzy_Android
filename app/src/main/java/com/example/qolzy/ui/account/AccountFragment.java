@@ -285,6 +285,21 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        binding.btnShareProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String deepLink = "https://myapp.com/profile/" + targetUserId;
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, deepLink);
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, "Share Profile");
+                view.getContext().startActivity(shareIntent);
+            }
+        });
+
         binding.layoutFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

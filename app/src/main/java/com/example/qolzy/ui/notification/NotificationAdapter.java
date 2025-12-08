@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,10 +28,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private List<Notification> notifications;
     private Context context;
-
+    String action = "";
     public NotificationAdapter(List<Notification> notifications, Context context) {
         this.notifications = notifications;
         this.context = context;
+    }
+
+    public interface OnNotificationListener{
+        void onClicker(String action, Long actionId);
+    }
+
+    private OnNotificationListener listener;
+
+    public void setOnNotificationlistener(OnNotificationListener listener){
+        this.listener = listener;
     }
 
     public void updateNotifications(List<Notification> newNotifications) {
@@ -41,13 +52,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @NonNull
     @Override
-    public NotificationAdapter.NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_notification, parent, false);
         return new NotificationViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationAdapter.NotificationViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
         Notification notification = notifications.get(position);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,15 +82,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 .into(holder.imgAvatar);
 
         String messageNotification = "";
+
         if ("follow".equals(notification.getType())) {
+            action= "follow";
             messageNotification = notification.getSender().getUserName() + " đã theo dõi bạn";
         } else if ("comment".equals(notification.getType())) {
+            action= "comment";
             messageNotification = notification.getSender().getUserName() + " đã bình luận về bài viết của bạn";
         } else if ("comment-reply".equals(notification.getType())) {
+            action= "comment";
             messageNotification = notification.getSender().getUserName() + " đã trả lời bình luận của bạn";
         } else if ("post".equals(notification.getType())){
+            action = "like";
             messageNotification = notification.getSender().getUserName() + " đã thích bài viết của bạn";
         }
+
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(action.equals("comment") || action.equals("like")){
+                    listener.onClicker(action, notification.getActionId());
+                }
+
+            }
+        });
 
         holder.tvTitle.setText(messageNotification+"");
     }
@@ -93,12 +119,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         private CircleImageView imgAvatar;
         private TextView tvTitle,tvTime;
+        private LinearLayout linearLayout;
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
             imgAvatar = itemView.findViewById(R.id.imgAvatar);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvTime = itemView.findViewById(R.id.tvTime);
+            linearLayout = itemView.findViewById(R.id.layoutNotification);
         }
     }
 

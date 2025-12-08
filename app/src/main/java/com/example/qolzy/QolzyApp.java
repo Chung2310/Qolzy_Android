@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.qolzy.data.model.Message;
 import com.example.qolzy.data.model.Notification;
 import com.example.qolzy.data.repository.UserRepository;
 import com.example.qolzy.util.NotificationHelper;
@@ -77,6 +78,7 @@ public class QolzyApp extends Application {
                 case OPENED:
                     Log.d(TAG, "✅ STOMP CONNECTED");
                     subscribeNotification();
+                    subscribeMessage();
                     break;
 
                 case ERROR:
@@ -116,11 +118,27 @@ public class QolzyApp extends Application {
                         messageNotification = notification.getSender().getUserName() + " đã trả lời bình luận của bạn";
                     }
 
-                    showNotification(getApplicationContext(), "Thông báo mới", messageNotification);
+                    showNotification(getApplicationContext(), "Thông báo mới", messageNotification, null);
                 });
     }
 
+    @SuppressLint("CheckResult")
+    private void subscribeMessage() {
+        stompClient.topic("/user/queue/messages") // queue dành cho user riêng
+                .subscribe(stompMessage -> {
+                    String payload = stompMessage.getPayload();
+                    Log.d(TAG, "📩 Received notification: " + payload);
 
+                    // Parse payload JSON
+                    Message message =
+                            new Gson().fromJson(payload, Message.class);
+
+                    String messageNotification = message.getContent()+"";
+                    String notificationTitle = message.getSender().getUserName() + " đã gửi tin nhắn cho bạn!";
+
+                    showNotification(getApplicationContext(), notificationTitle, messageNotification, message.getSender());
+                });
+    }
 
     @Override
     public void onTerminate() {

@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        >
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:title="Qolzy Mess"
+            app:titleTextColor="#3F51B5"
+            android:backgroundTint="#FFFFFF"
+            android:titleTextColor="@android:color/white"
+            app:titleCentered="false"/>
 
         <!-- Ô tìm kiếm -->
         <EditText
@@ -18,20 +28,20 @@
             android:layout_height="wrap_content"
             android:hint="Tìm kiếm"
             android:padding="10dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_margin="5dp"
             android:background="@drawable/bg_unselected_genre"/>
 
         <FrameLayout
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerSearch"
                 android:layout_width="match_parent"
-
                 android:layout_height="match_parent"
                 android:paddingTop="8dp"/>
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleLarge"
@@ -39,16 +49,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
+
             <TextView
-                android:visibility="invisible"
                 android:id="@+id/tvSearch"
                 android:textSize="20dp"
-                android:layout_gravity="center_vertical"
+                android:text="Không tìm thấy kết quả"
+                android:gravity="center"
+                android:visibility="invisible"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
         </FrameLayout>
 
     </LinearLayout>
 
 </FrameLayout>
-

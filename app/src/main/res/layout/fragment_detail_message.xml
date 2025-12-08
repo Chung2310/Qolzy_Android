@@ -17,9 +17,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorSurface"
             app:titleCentered="false"
+            app:navigationIcon="@drawable/ic_arrow_back"
             android:paddingEnd="8dp">
 
-            <!-- Avatar + Tên người nhận -->
             <LinearLayout
                 android:id="@+id/chatToolbarContent"
                 android:layout_width="wrap_content"

@@ -6,6 +6,7 @@ public class Notification {
     private User receiver;
     private String type;
     private String message;
+    private Long actionId;
     private boolean isRead;
     private String createdAt;
 
@@ -63,5 +64,13 @@ public class Notification {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(Long actionId) {
+        this.actionId = actionId;
     }
 }

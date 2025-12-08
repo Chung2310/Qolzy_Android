@@ -10,10 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.qolzy.R;
 import com.example.qolzy.data.model.Message;
 import com.example.qolzy.data.model.User;
 import com.example.qolzy.util.Utils;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
@@ -36,6 +39,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         this.listener = listener;
     }
 
+    public  void addMessage(Message message){
+        messages.add(message);
+        Log.d("MessageAdapter", "them message realtime");
+        notifyDataSetChanged();
+    }
+
+    public void addNewMessages(List<Message> newMessages){
+        int start = this.messages.size();
+        this.messages.addAll(0, newMessages);
+        notifyItemRangeInserted(start, newMessages.size());
+    }
+
     public void updateMessages(List<Message> newMessages) {
         messages.clear(); Log.d("MessageAdapter", newMessages.size() +"");
         messages.addAll(newMessages); notifyDataSetChanged();
@@ -49,28 +64,48 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     @Override public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Log.d("MessageAdapter", "Load message "+ position); Message message = messages.get(position);
+        Message message = messages.get(position);
+        Gson gson = new Gson();
+        Log.d("MessageAdapter", gson.toJson(message));
         if (message == null) return; boolean isSender = message.getSender().getId().equals(currentUserId);
         if (isSender) {
             // Hiển thị phần gửi
             holder.layoutSender.setVisibility(View.VISIBLE);
             holder.layoutReceiver.setVisibility(View.GONE);
             holder.tvMessageSender.setText(message.getContent());
-            String avatarUrl = message.getSender().getAvatarUrl();
-            if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                Glide.with(context) .load(avatarUrl.startsWith("https") ? avatarUrl : Utils.BASE_URL + avatarUrl)
-                        .into(holder.imgAvatarSender);
-            }
+
+            String fixedUrl = Utils.BASE_URL.replace("/api/", "");
+            String avatarUrl = message.getSender().getAvatarUrl().contains("https")
+                    ? message.getSender().getAvatarUrl()
+                    : fixedUrl + message.getSender().getAvatarUrl();
+
+            Log.d("AvatarUrl", avatarUrl);
+            Glide.with(context)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.ic_android_black_24dp)
+                    .error(R.drawable.user)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .fitCenter()
+                    .into(holder.imgAvatarSender);
         } else {
             // Hiển thị phần nhận
             holder.layoutReceiver.setVisibility(View.VISIBLE);
             holder.layoutSender.setVisibility(View.GONE);
             holder.tvMessageReceiver.setText(message.getContent());
-            String avatarUrl = message.getSender().getAvatarUrl();
-            if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                Glide.with(context) .load(avatarUrl.startsWith("https") ? avatarUrl : Utils.BASE_URL + avatarUrl)
-                        .into(holder.imgAvatarReceiver);
-            }
+
+            String fixedUrl = Utils.BASE_URL.replace("/api/", "");
+            String avatarUrl = message.getSender().getAvatarUrl().contains("https")
+                    ? message.getSender().getAvatarUrl()
+                    : fixedUrl + message.getSender().getAvatarUrl();
+
+            Log.d("AvatarUrl", avatarUrl);
+            Glide.with(context)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.ic_android_black_24dp)
+                    .error(R.drawable.user)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .fitCenter()
+                    .into(holder.imgAvatarReceiver);
         }
     }
 

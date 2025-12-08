@@ -1,6 +1,7 @@
 package com.example.qolzy.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.qolzy.R;
+import com.example.qolzy.data.model.User;
 import com.example.qolzy.databinding.ActivityMainBinding;
 import com.example.qolzy.ui.account.AccountFragment;
 import com.example.qolzy.ui.add_post.AddPostFragment;
 import com.example.qolzy.ui.home.HomeFragment;
+import com.example.qolzy.ui.message.DetailMessageFragment;
 import com.example.qolzy.ui.reels.ReelsFragment;
 import com.example.qolzy.ui.search.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         requestNotificationPermissionIfNeeded();
+
+        handleNotificationNavigation(getIntent());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new HomeFragment())
@@ -123,4 +128,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // cập nhật intent mới
+        handleNotificationNavigation(intent);
+    }
+
+
+    private void handleNotificationNavigation(Intent intent) {
+        if (intent == null) return;
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        String navigateTo = intent.getStringExtra("navigate_to");
+        User user = (User) intent.getSerializableExtra("user");
+
+        Log.d("MainActivityIntent", "navigate_to=" + navigateTo);
+
+        if ("messages".equals(navigateTo) && user != null) {
+
+            DetailMessageFragment fragment = new DetailMessageFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("user", user);
+            fragment.setArguments(bundle);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)  // ID FrameLayout chứa fragment
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
 }
